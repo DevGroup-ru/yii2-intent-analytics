@@ -1,0 +1,59 @@
+// BEM mixins
+$element-separator: "__";
+$modifier-separator: "--";
+
+
+@function selector-to-string($selector) {
+  $selector: inspect($selector); //cast to string
+  $selector: str-slice($selector, 2, -2); //remove brackets
+  @return $selector;
+}
+
+@function contains-modifier($selector) {
+  $selector: selector-to-string($selector);
+  @if str-index($selector, $modifier-separator) {
+    @return true;
+  } @else {
+    @return false;
+  }
+}
+
+@function get-block($selector) {
+  $selector: selector-to-string($selector);
+  $modifier-start: str-index($selector, $modifier-separator) - 1;
+  @return str-slice($selector, 0, $modifier-start);
+}
+
+@mixin block($block) {
+  .#{$block} {
+    @content;
+  }
+}
+
+@mixin element($element) {
+  $selector: &;
+  @if contains-modifier($selector) {
+    $block: get-block($selector);
+    @at-root {
+      #{$selector} {
+        #{$block + $element-separator + $element} {
+          @content;
+        }
+      }
+    }
+  } @else {
+    @at-root {
+      #{$selector + $element-separator + $element} {
+        @content;
+      }
+    }
+  }
+}
+
+@mixin modifier($modifier) {
+  @at-root {
+    #{&}#{$modifier-separator + $modifier} {
+      @content;
+    }
+  }
+}

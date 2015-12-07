@@ -1,0 +1,19 @@
+{
+  "name": "libs",
+  "homepage": "https://github.com/DevGroup-ru/yii2-admin-utils",
+  "authors": [
+    "bethrezen <b37hr3z3n@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+  }
+}

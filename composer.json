@@ -1,0 +1,37 @@
+{
+    "name": "devgroup/yii2-intent-analytics",
+    "description": "Allows building yii2 apps for multiple languages using regional URL's and domains",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension","analytics", "metrika", "google analytics", "intent", "statistics"],
+    "homepage": "http://www.devgroup.ru/",
+    "support": {
+        "issues": "https://github.com/devgroup-ru/yii2-intent-analytics/issues?state=open",
+        "source": "https://github.com/devgroup-ru/yii2-intent-analytics"
+    },
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Alexander Kozhevnikov",
+            "email": "b37hr3z3n@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "^2.0.6",
+        "devgroup/yii2-tag-dependency-helper": "^1.2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0",
+        "phpunit/dbunit": "~1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "DevGroup\\Analytics\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DevGroup\\Analytics\\Tests\\": "tests/"
+        }
+    }
+}
