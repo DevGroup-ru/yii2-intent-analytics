@@ -14,18 +14,19 @@ class m151228_072508_yii2_intent_analytics extends Migration
         $this->createTable(
             '{{%analytics_categories}}',
             [
-                'id' => $this->integer(10)->notNull(),
+                'id' =>$this->primaryKey(),
                 'name' => $this->integer()->defaultValue(null),
             ],
             $tableOptions
         );
+
         $this->addPrimaryKey('cId', '{{%analytics_categories}}', 'id');
 //        $this->alterColumn('analytics_categories', 'id', 'UNSIGNED NOT NULL AUTO_INCREMENT');
 
         $this->createTable(
             '{{%analytics_goal}}',
             [
-                'id' => $this->integer(10)->notNull(),
+                'id' => $this->primaryKey(),
                 'name' => $this->text(),
                 'is_transactional' => 'tinyint(1) NOT NULL DEFAULT \'0\'',
                 'analytics_categories_id' => $this->integer(10)->notNull(),
@@ -38,32 +39,26 @@ class m151228_072508_yii2_intent_analytics extends Migration
                 'once_per_visitor' => 'tinyint(1) DEFAULT \'0\'',
             ],
             $tableOptions);
-        $this->addPrimaryKey('analyticsQoal', '{{%analytics_goal}}', 'id');
         $this->createIndex('fk_analytics_goal_analytics_categories1_idx', '{{%analytics_goal}}', 'analytics_categories_id');
-//        $this->alterColumn('analytics_goal', 'id', 'UNSIGNED NOT NULL AUTO_INCREMENT');
 
         $this->createTable(
             '{{%intent}}',
             [
-                'id' => $this->integer(10)->notNull(),
+                'id' => $this->primaryKey(),
                 'name' => 'tinytext NOT NULL',
                 'timeout' => $this->integer(10)->defaultValue(null)
             ], $tableOptions);
-        $this->addPrimaryKey('intentIf', '{{%intent}}', 'id');
-//        $this->alterColumn('intent', 'id', 'UNSIGNED NOT NULL AUTO_INCREMENT');
 
         $this->createTable(
             '{{%intent_detectors}}',
             [
-                'id' => $this->integer(10)->notNull(),
+                'id' => $this->primaryKey(),
                 'name' => 'tinytext NOT NULL',
                 'class_name' => 'tinytext NOT NULL',
                 'params' => 'longtext',
                 'needs_traffic_sources_id' => $this->integer(10)->defaultValue(0)->notNull()
             ], $tableOptions);
-        $this->addPrimaryKey('intentDetectors', '{{%intent_detectors}}', 'id');
         $this->createIndex('fk_intent_detectors_traffic_sources2_idx', '{{%intent_detectors}}', 'needs_traffic_sources_id');
-//        $this->alterColumn('intent_detectors', 'id', 'UNSIGNED NOT NULL AUTO_INCREMENT');
 
         $this->createTable(
             '{{%intent_detectors_chain}}',
@@ -78,7 +73,7 @@ class m151228_072508_yii2_intent_analytics extends Migration
         $this->createTable(
             '{{%self_reporting_block}}',
             [
-                'id' => $this->integer(10)->notNull(),
+                'id' => $this->primaryKey(),
                 'name' => 'tinytext',
                 'analytics_goal_id' => $this->integer(10)->notNull(),
                 'track_inview' => 'tinyint(1) NOT NULL DEFAULT \'0\'',
@@ -88,36 +83,31 @@ class m151228_072508_yii2_intent_analytics extends Migration
                 'track_mouseclick' => 'tinyint(1) NOT NULL DEFAULT \'1\'',
                 'track_text_select' => 'tinyint(1) NOT NULL DEFAULT \'1\''
             ], $tableOptions);
-        $this->addPrimaryKey('selfReportingBlock', '{{%self_reporting_block}}', 'id');
         $this->createIndex('fk_self_reporting_block_analytics_goal1_idx', '{{%self_reporting_block}}', 'analytics_goal_id');
-//        $this->alterColumn('self_reporting_block', 'id', 'UNSIGNED NOT NULL AUTO_INCREMENT');
 
         $this->createTable(
             '{{%traffic_sources}}',
             [
-                'id' => $this->integer(10)->notNull(),
+                'id' => $this->primaryKey(),
                 'name' => 'tinytext',
                 'class_name' => 'tinytext',
                 'params' => 'longtext'
             ], $tableOptions);
-        $this->addPrimaryKey('trafficSources', '{{%traffic_sources}}', 'id');
 
         $this->createTable(
             '{{%visited_page}}',
             [
-                'id' => $this->integer(10)->notNull(),
+                'id' => $this->primaryKey(),
                 'route' => $this->string(80)->defaultValue(null),
                 'param' => $this->string(),
                 'url' => $this->string()
             ], $tableOptions);
-        $this->addPrimaryKey('visitedPage', '{{%visited_page}}', 'id');
         $this->createIndex('byRoute', '{{%visited_page}}', 'route');
-//        $this->alterColumn('visited_page', 'id', 'UNSIGNED NOT NULL AUTO_INCREMENT');
 
         $this->createTable(
             '{{%visitor}}',
             [
-                'id' => $this->integer(10)->notNull(),
+                'id' => $this->primaryKey(),
                 'user_id' => $this->integer(10)->defaultValue(0)->notNull(),
                 'first_visit_at' => $this->dateTime()->defaultValue(null),
                 'first_visit_referer' => $this->string(),
@@ -136,19 +126,18 @@ class m151228_072508_yii2_intent_analytics extends Migration
                 'overall_actions_value' => $this->float()->defaultValue(null),
                 'overall_goals_value' => $this->float()->defaultValue(null),
             ], $tableOptions);
-        $this->addPrimaryKey('visitorId', '{{%visitor}}', 'id');
         $this->createIndex('byUser', '{{%visitor}}', 'user_id');
         $this->createIndex('byFirstVisit', '{{%visitor}}', 'first_visit_at');
         $this->createIndex('byLastVisit', '{{%visitor}}', 'last_activity_at');
         $this->createIndex('fk_Visitor_VisitedPage_first', '{{%visitor}}', 'first_visit_visited_page_id');
-        $this->createIndex('fk_Visitor_VisitedPage_last', '{{%visitor}}', 'last_activity_visited_page_id');
+//        $this->createIndex('fk_Visitor_VisitedPage_last', '{{%visitor}}', 'last_activity_visited_page_id');
         $this->createIndex('fk_visitor_traffic_sources1_idx', '{{%visitor}}', 'first_traffic_sources_id');
         $this->createIndex('fk_visitor_traffic_sources2_idx', '{{%visitor}}', 'last_traffic_sources_id');
 
         $this->createTable(
             '{{%visitor_session}}',
             [
-                'id' => $this->integer(10)->notNull(),
+                'id' => $this->primaryKey(),
                 'visitor_id' => $this->integer(10)->notNull(),
                 'started_at' => $this->dateTime()->notNull(),
                 'last_action_at' => $this->dateTime()->notNull(),
@@ -164,13 +153,11 @@ class m151228_072508_yii2_intent_analytics extends Migration
                 'goals_value' => $this->float()->defaultValue(0),
                 'traffic_sources_id' => $this->integer(10)->notNull(),
             ], $tableOptions);
-        $this->addPrimaryKey('visitorSession', '{{%visitor_session}}', 'id');
         $this->createIndex('fk_VisitorSession_Visitor1_idx', '{{%visitor_session}}', 'visitor_id');
         $this->createIndex('fk_visitor_session_visited_page1_idx', '{{%visitor_session}}', 'first_visited_page_id');
         $this->createIndex('fk_visitor_session_visited_page2_idx', '{{%visitor_session}}', 'last_visited_page_id');
         $this->createIndex('fk_visitor_session_traffic_sources1_idx', '{{%visitor_session}}', 'traffic_sources_id');
         $this->createIndex('byTrafficSrc', '{{%visitor_session}}', 'traffic_sources_id');
-//        $this->alterColumn('visitor', 'id', 'UNSIGNED NOT NULL AUTO_INCREMENT');
 
         $this->createTable(
             '{{%visitor_session_goals}}',
@@ -184,7 +171,6 @@ class m151228_072508_yii2_intent_analytics extends Migration
         $this->addPrimaryKey('visitor_session_id', '{{%visitor_session_goals}}', ['visitor_session_id', 'analytics_goal_id']);
         $this->createIndex('fk_visitor_session_goals_analytics_goal1_idx', '{{%visitor_session_goals}}', 'analytics_goal_id');
         $this->createIndex('fk_visitor_session_goals_visited_page1_idx', '{{%visitor_session_goals}}', 'visited_page_id');
-//        $this->alterColumn('visitor_session', 'id', 'UNSIGNED NOT NULL AUTO_INCREMENT');
 
         $this->createTable(
             '{{%visitor_session_intents}}',
@@ -204,10 +190,10 @@ class m151228_072508_yii2_intent_analytics extends Migration
         $this->addForeignKey('intent_detectors_ibfk_1', 'intent_detectors', 'id', 'intent_detectors_chain', 'intent_detectors_id');
         $this->addForeignKey('fk_self_reporting_block_analytics_goal1', 'self_reporting_block', 'analytics_goal_id', 'analytics_goal', 'id');
         $this->addForeignKey('traffic_sources_ibfk_1', 'traffic_sources', 'id', 'intent_detectors', 'needs_traffic_sources_id');
-        $this->addForeignKey('visited_page_ibfk_1', 'visited_page', 'id', 'visitor_session', 'first_visited_page_id');
+        $this->addForeignKey('visited_page_ibfk_1', 'visitor_session', 'first_visited_page_id', 'visited_page', 'id');
 
-        $this->addForeignKey('fk_Visitor_VisitedPage_first', 'visitor', 'first_visit_visited_page_id', 'visited_page', 'id');
-        $this->addForeignKey('fk_Visitor_VisitedPage_last', 'visitor', 'last_activity_visited_page_id', 'visited_page', 'id');
+//        $this->addForeignKey('fk_Visitor_VisitedPage_first', 'visitor', 'first_visit_visited_page_id', 'visited_page', 'id');
+//        $this->addForeignKey('fk_Visitor_VisitedPage_last', 'visitor', 'last_activity_visited_page_id', 'visited_page', 'id');
         $this->addForeignKey('fk_visitor_traffic_sources1', 'visitor', 'first_traffic_sources_id', 'visited_page', 'id');
         $this->addForeignKey('fk_visitor_traffic_sources2', 'visitor', 'last_traffic_sources_id', 'visited_page', 'id');
         $this->addForeignKey('visitor_ibfk_1', 'visitor', 'last_traffic_sources_id', 'visitor_session', 'visitor_id');
