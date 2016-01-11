@@ -15,28 +15,25 @@ class m151228_072508_yii2_intent_analytics extends Migration
             '{{%analytics_categories}}',
             [
                 'id' =>$this->primaryKey(),
-                'name' => $this->integer()->defaultValue(null),
+                'name' => $this->integer()->defaultValue('')->notNull(),
             ],
             $tableOptions
         );
-
-        $this->addPrimaryKey('cId', '{{%analytics_categories}}', 'id');
-//        $this->alterColumn('analytics_categories', 'id', 'UNSIGNED NOT NULL AUTO_INCREMENT');
 
         $this->createTable(
             '{{%analytics_goal}}',
             [
                 'id' => $this->primaryKey(),
                 'name' => $this->text(),
-                'is_transactional' => 'tinyint(1) NOT NULL DEFAULT \'0\'',
+                'is_transactional' => $this->boolean()->notNull()->defaultValue(0),
                 'analytics_categories_id' => $this->integer(10)->notNull(),
-                'ga_action_name' => 'tinytext',
+                'ga_action_name' => $this->string(),
                 'ga_value' => $this->integer(10)->notNull(),
-                'ga_label' => 'tinytext',
-                'ym_goal' => 'tinytext',
+                'ga_label' => $this->string(),
+                'ym_goal' => $this->string(),
                 'custom_params' => $this->string(),
-                'once_per_session' => 'tinyint(1) DEFAULT \'0\'',
-                'once_per_visitor' => 'tinyint(1) DEFAULT \'0\'',
+                'once_per_session' => $this->boolean()->notNull()->defaultValue(0),
+                'once_per_visitor' => $this->boolean()->notNull()->defaultValue(0),
             ],
             $tableOptions);
         $this->createIndex('fk_analytics_goal_analytics_categories1_idx', '{{%analytics_goal}}', 'analytics_categories_id');
@@ -45,17 +42,17 @@ class m151228_072508_yii2_intent_analytics extends Migration
             '{{%intent}}',
             [
                 'id' => $this->primaryKey(),
-                'name' => 'tinytext NOT NULL',
-                'timeout' => $this->integer(10)->defaultValue(null)
+                'name' => $this->string()->notNull(),
+                'timeout' => $this->integer(10)->defaultValue(0)
             ], $tableOptions);
 
         $this->createTable(
             '{{%intent_detectors}}',
             [
                 'id' => $this->primaryKey(),
-                'name' => 'tinytext NOT NULL',
-                'class_name' => 'tinytext NOT NULL',
-                'params' => 'longtext',
+                'name' => $this->string()->notNull(),
+                'class_name' => $this->string()->notNull(),
+                'params' => $this->string(),
                 'needs_traffic_sources_id' => $this->integer(10)->defaultValue(0)->notNull()
             ], $tableOptions);
         $this->createIndex('fk_intent_detectors_traffic_sources2_idx', '{{%intent_detectors}}', 'needs_traffic_sources_id');
@@ -74,14 +71,15 @@ class m151228_072508_yii2_intent_analytics extends Migration
             '{{%self_reporting_block}}',
             [
                 'id' => $this->primaryKey(),
-                'name' => 'tinytext',
+                'name' => $this->string(),
                 'analytics_goal_id' => $this->integer(10)->notNull(),
-                'track_inview' => 'tinyint(1) NOT NULL DEFAULT \'0\'',
+                'track_inview' => $this->integer(1)->notNull()->defaultValue(0),
+                'track_inview' => $this->integer(1)->notNull()->defaultValue(0),
                 'inview_delay' => $this->integer(11)->defaultValue(0)->notNull(),
                 'inview_tracking_type' => $this->integer(11)->defaultValue(0)->notNull(), /*add comment =>  COMMENT 'top, bottom, whole',*/
-                'track_hover' => 'tinyint(1) NOT NULL DEFAULT \'0\'',
-                'track_mouseclick' => 'tinyint(1) NOT NULL DEFAULT \'1\'',
-                'track_text_select' => 'tinyint(1) NOT NULL DEFAULT \'1\''
+                'track_hover' => $this->integer(1)->notNull()->defaultValue(0),
+                'track_mouseclick' => $this->integer(1)->notNull()->defaultValue(1),
+                'track_text_select' => $this->integer(1)->notNull()->defaultValue(1)
             ], $tableOptions);
         $this->createIndex('fk_self_reporting_block_analytics_goal1_idx', '{{%self_reporting_block}}', 'analytics_goal_id');
 
@@ -89,9 +87,9 @@ class m151228_072508_yii2_intent_analytics extends Migration
             '{{%traffic_sources}}',
             [
                 'id' => $this->primaryKey(),
-                'name' => 'tinytext',
-                'class_name' => 'tinytext',
-                'params' => 'longtext'
+                'name' => $this->string(),
+                'class_name' => $this->string(),
+                'params' => $this->string()
             ], $tableOptions);
 
         $this->createTable(
