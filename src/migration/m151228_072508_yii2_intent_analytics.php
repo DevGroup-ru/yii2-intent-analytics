@@ -74,7 +74,6 @@ class m151228_072508_yii2_intent_analytics extends Migration
                 'name' => $this->string(),
                 'analytics_goal_id' => $this->integer(10)->notNull(),
                 'track_inview' => $this->integer(1)->notNull()->defaultValue(0),
-                'track_inview' => $this->integer(1)->notNull()->defaultValue(0),
                 'inview_delay' => $this->integer(11)->defaultValue(0)->notNull(),
                 'inview_tracking_type' => $this->integer(11)->defaultValue(0)->notNull(), /*add comment =>  COMMENT 'top, bottom, whole',*/
                 'track_hover' => $this->integer(1)->notNull()->defaultValue(0),
