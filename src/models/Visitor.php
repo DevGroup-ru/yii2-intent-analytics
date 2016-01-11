@@ -39,7 +39,7 @@ class Visitor extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'visitor';
+        return '{{%visitor}}';
     }
 
     /**

@@ -21,7 +21,7 @@ class TrafficSources extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'traffic_sources';
+        return '{{%traffic_sources}}';
     }
 
     /**

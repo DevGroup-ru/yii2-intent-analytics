@@ -35,7 +35,7 @@ class VisitorSession extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'visitor_session';
+        return '{{%visitor_session}}';
     }
 
     /**

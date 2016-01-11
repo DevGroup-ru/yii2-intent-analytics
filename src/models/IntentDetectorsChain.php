@@ -21,7 +21,7 @@ class IntentDetectorsChain extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'intent_detectors_chain';
+        return '{{%intent_detectors_chain}}';
     }
 
     /**

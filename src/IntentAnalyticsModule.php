@@ -37,4 +37,6 @@ class IntentAnalyticsModule extends Module
      * @var string
      */
     public $yaCounterObject = 'yaCounter21370474';
+
+
 }

@@ -23,7 +23,7 @@ class VisitorSessionIntents extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'visitor_session_intents';
+        return '{{%visitor_session_intents}}';
     }
 
     /**

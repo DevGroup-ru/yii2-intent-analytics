@@ -22,7 +22,7 @@ class Intent extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'intent';
+        return '{{%intent}}';
     }
 
     /**

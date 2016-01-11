@@ -23,7 +23,7 @@ class IntentDetectors extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'intent_detectors';
+        return '{{%intent_detectors}}';
     }
 
     /**

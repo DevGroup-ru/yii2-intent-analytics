@@ -19,7 +19,7 @@ class AnalyticsCategories extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'analytics_categories';
+        return '{{%analytics_categories}}';
     }
 
     /**

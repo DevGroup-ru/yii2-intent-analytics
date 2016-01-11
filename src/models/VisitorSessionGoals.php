@@ -23,7 +23,7 @@ class VisitorSessionGoals extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'visitor_session_goals';
+        return '{{%visitor_session_goals}}';
     }
 
     /**

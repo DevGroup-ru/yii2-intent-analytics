@@ -26,7 +26,7 @@ class SelfReportingBlock extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'self_reporting_block';
+        return '{{%self_reporting_block}}';
     }
 
     /**

@@ -30,7 +30,7 @@ class AnalyticsGoal extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'analytics_goal';
+        return '{{%analytics_goal}}';
     }
 
     /**
@@ -78,7 +78,7 @@ class AnalyticsGoal extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getId0()
+    public function getId()
     {
         return $this->hasOne(VisitorSessionGoals::className(), ['analytics_goal_id' => 'id']);
     }

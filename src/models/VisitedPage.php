@@ -26,7 +26,7 @@ class VisitedPage extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'visited_page';
+        return '{{%visited_page}}';
     }
 
     /**
