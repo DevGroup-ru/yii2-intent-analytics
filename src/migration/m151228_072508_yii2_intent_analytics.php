@@ -15,7 +15,7 @@ class m151228_072508_yii2_intent_analytics extends Migration
             '{{%analytics_categories}}',
             [
                 'id' =>$this->primaryKey(),
-                'name' => $this->integer()->defaultValue('')->notNull(),
+                'name' => $this->integer(10)->notNull(),
             ],
             $tableOptions
         );
