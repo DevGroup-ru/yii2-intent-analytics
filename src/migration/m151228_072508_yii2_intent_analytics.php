@@ -15,7 +15,7 @@ class m151228_072508_yii2_intent_analytics extends Migration
             '{{%analytics_categories}}',
             [
                 'id' =>$this->primaryKey(),
-                'name' => $this->integer(10)->notNull(),
+                'name' => $this->string()->defaultValue('')->notNull(),
             ],
             $tableOptions
         );
@@ -127,7 +127,7 @@ class m151228_072508_yii2_intent_analytics extends Migration
         $this->createIndex('byFirstVisit', '{{%visitor}}', 'first_visit_at');
         $this->createIndex('byLastVisit', '{{%visitor}}', 'last_activity_at');
         $this->createIndex('fk_Visitor_VisitedPage_first', '{{%visitor}}', 'first_visit_visited_page_id');
-//        $this->createIndex('fk_Visitor_VisitedPage_last', '{{%visitor}}', 'last_activity_visited_page_id');
+        $this->createIndex('fk_Visitor_VisitedPage_last', '{{%visitor}}', 'last_activity_visited_page_id');
         $this->createIndex('fk_visitor_traffic_sources1_idx', '{{%visitor}}', 'first_traffic_sources_id');
         $this->createIndex('fk_visitor_traffic_sources2_idx', '{{%visitor}}', 'last_traffic_sources_id');
 
@@ -189,11 +189,11 @@ class m151228_072508_yii2_intent_analytics extends Migration
         $this->addForeignKey('traffic_sources_ibfk_1', 'traffic_sources', 'id', 'intent_detectors', 'needs_traffic_sources_id');
         $this->addForeignKey('visited_page_ibfk_1', 'visitor_session', 'first_visited_page_id', 'visited_page', 'id');
 
-//        $this->addForeignKey('fk_Visitor_VisitedPage_first', 'visitor', 'first_visit_visited_page_id', 'visited_page', 'id');
-//        $this->addForeignKey('fk_Visitor_VisitedPage_last', 'visitor', 'last_activity_visited_page_id', 'visited_page', 'id');
+        $this->addForeignKey('fk_Visitor_VisitedPage_first', 'visitor', 'first_visit_visited_page_id', 'visited_page', 'id');
+        $this->addForeignKey('fk_Visitor_VisitedPage_last', 'visitor', 'last_activity_visited_page_id', 'visited_page', 'id');
         $this->addForeignKey('fk_visitor_traffic_sources1', 'visitor', 'first_traffic_sources_id', 'visited_page', 'id');
         $this->addForeignKey('fk_visitor_traffic_sources2', 'visitor', 'last_traffic_sources_id', 'visited_page', 'id');
-        $this->addForeignKey('visitor_ibfk_1', 'visitor', 'last_traffic_sources_id', 'visitor_session', 'visitor_id');
+//        $this->addForeignKey('visitor_ibfk_1', 'visitor', 'last_traffic_sources_id', 'visitor_session', 'visitor_id');
 
 //        $this->addForeignKey('visitor_session_ibfk_1', 'visitor_session', 'id', 'visitor_session_goals', 'visitor_session_id');
         $this->addForeignKey('visitor_session_goals_ibfk_1', 'visitor_session_goals', 'visited_page_id', 'visited_page', 'id');
