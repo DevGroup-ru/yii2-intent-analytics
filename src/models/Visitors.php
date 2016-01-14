@@ -29,21 +29,6 @@ class Visitors extends Session
         }
 
         $visitorSession = new VisitorSession();
-        $visitorSession->visitor_id = $this->getId();
-        $visitorSession->started_at = $this->startedAt();
-        $visitorSession->last_action_at = $this->lastActionAt();
-        $visitorSession->ip = $this->getIpUser();
-        $visitorSession->first_visited_page_id = $this->getPageId(Yii::$app->request->url);
-        $visitorSession->first_activity_at = $this->firstActivityAt();
-        $visitorSession->last_visited_page_id = $this->getPageId(Yii::$app->request->url);
-        $visitorSession->last_activity_at = $this->lastActivityAt();
-        $visitorSession->intents_count;
-        $visitorSession->actions_count;
-        $visitorSession->goals_count;
-        $visitorSession->actions_value;
-        $visitorSession->goals_value;
-        $visitorSession->traffic_sources_id;
-        var_dump($visitorSession->save());
 
         if ($visitorSession->findOne([
                 'visitor_id' => $visitorId,
@@ -65,21 +50,18 @@ class Visitors extends Session
     /**
      * @param $link
      */
-    public function getPageId($urlReferrer)
+    public function getPageId($link)
     {
         $page = new VisitedPage();
-        $checkPage = $page->findOne(['url' => $urlReferrer]);
+        $checkPage = $page->findOne(['url' => $link]);
 
-        if ($urlReferrer !== null && empty($checkPage)) {
-
+        if ($link !== null && empty($checkPage)) {
             $page->route = '';
             $page->param = '';
-            $page->url = $urlReferrer;
+            $page->url = $link;
             $page->save();
-
             return Yii::$app->db->getLastInsertId();
-
-        } elseif ($urlReferrer !== null) {
+        } elseif ($link !== null) {
             return $checkPage->id;
         } else {
             return null;
@@ -153,4 +135,93 @@ class Visitors extends Session
     {
         return date('Y-m-d H:i:s');
     }
+
+    /**
+     * @return int
+     */
+    protected function timeExpire()
+    {
+        return time() + 24 * 60 * 60;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getCookieValue()
+    {
+        return Yii::$app->getRequest()->getCookies()->getValue($this->_keyCookie, false);
+    }
+
+    /**
+     * @param $cookies
+     */
+    private function setCookie($value)
+    {
+        $cookies = Yii::$app->response->cookies;
+        $cookies->add(new \yii\web\Cookie([
+            'name' => $this->_keyCookie,
+            'value' => $value,
+            'expire' => $this->timeExpire(),
+        ]));
+        return $value;
+    }
+
+    /**
+     * @return bool
+     */
+    public function addVisitor()
+    {
+        $url = Yii::$app->request->url;
+        $visitor = new Visitor();
+        $visitor->user_id;
+        $visitor->first_visit_at = $this->firstActivityAt();
+        $visitor->first_visit_referer = $this->getPageId($this->getReferrer());
+        $visitor->first_visit_visited_page_id = $this->getPageId($url);
+        $visitor->first_traffic_sources_id = $this->getPageId($url);
+        $visitor->last_activity_at = $this->lastActivityAt();
+        $visitor->last_activity_visited_page_id = $this->getPageId($url);
+        $visitor->last_traffic_sources_id = 1;
+        $visitor->geo_country_id;
+        $visitor->geo_region_id;
+        $visitor->geo_city_id;
+        $visitor->intents_count;
+        $visitor->sessions_count;
+        $visitor->actions_count;
+        $visitor->goals_count;
+        $visitor->overall_actions_value;
+        $visitor->overall_goals_value;
+        $visitor->save();
+        return $visitor->id;
+    }
+
+    private function addSession($visitorId)
+    {
+        $visitorSession = new VisitorSession();
+        $visitorSession->visitor_id = $visitorId;
+        $visitorSession->session_id = $this->id;
+        $visitorSession->started_at = $this->startedAt();
+        $visitorSession->last_action_at = $this->lastActionAt();
+        $visitorSession->ip = $this->getIpUser();
+        $visitorSession->first_visited_page_id = $this->getPageId(Yii::$app->request->url);
+        $visitorSession->first_activity_at = $this->firstActivityAt();
+        $visitorSession->last_visited_page_id = $this->getPageId(Yii::$app->request->url);
+        $visitorSession->last_activity_at = $this->lastActivityAt();
+        $visitorSession->intents_count;
+        $visitorSession->actions_count;
+        $visitorSession->goals_count;
+        $visitorSession->actions_value;
+        $visitorSession->goals_value;
+        $visitorSession->traffic_sources_id = 1;
+        $visitorSession->save();
+        return $visitorSession->id;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    private function getReferrer()
+    {
+        return Yii::$app->request->referrer;
+    }
+
 }
