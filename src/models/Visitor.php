@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace DevGroup\Analytics\models;
 
 use Yii;
 
@@ -48,7 +48,6 @@ class Visitor extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'last_traffic_sources_id'], 'required'],
             [['id', 'user_id', 'first_visit_visited_page_id', 'first_traffic_sources_id', 'last_activity_visited_page_id', 'last_traffic_sources_id', 'geo_country_id', 'geo_region_id', 'geo_city_id', 'intents_count', 'sessions_count', 'actions_count', 'goals_count'], 'integer'],
             [['first_visit_at', 'last_activity_at'], 'safe'],
             [['overall_actions_value', 'overall_goals_value'], 'number'],
@@ -57,7 +56,7 @@ class Visitor extends \yii\db\ActiveRecord
             [['last_activity_visited_page_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['last_activity_visited_page_id' => 'id']],
             [['first_traffic_sources_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['first_traffic_sources_id' => 'id']],
             [['last_traffic_sources_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['last_traffic_sources_id' => 'id']],
-            [['last_traffic_sources_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitorSession::className(), 'targetAttribute' => ['last_traffic_sources_id' => 'visitor_id']],
+//            [['last_traffic_sources_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitorSession::className(), 'targetAttribute' => ['last_traffic_sources_id' => 'visitor_id']],
         ];
     }
 

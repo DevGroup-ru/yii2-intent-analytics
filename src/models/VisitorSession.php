@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace DevGroup\Analytics\models;
 
 use Yii;
 
@@ -9,6 +9,7 @@ use Yii;
  *
  * @property integer $id
  * @property integer $visitor_id
+ * @property string $session_id
  * @property string $started_at
  * @property string $last_action_at
  * @property string $ip
@@ -44,11 +45,13 @@ class VisitorSession extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'visitor_id', 'started_at', 'last_action_at', 'first_visited_page_id', 'first_activity_at', 'last_visited_page_id', 'last_activity_at', 'traffic_sources_id'], 'required'],
-            [['id', 'visitor_id', 'first_visited_page_id', 'last_visited_page_id', 'intents_count', 'actions_count', 'goals_count', 'traffic_sources_id'], 'integer'],
+            [['visitor_id', 'started_at', 'last_action_at', 'first_visited_page_id', 'first_activity_at', 'last_visited_page_id', 'last_activity_at', 'traffic_sources_id'], 'required'],
+            [['visitor_id', 'first_visited_page_id', 'last_visited_page_id', 'intents_count', 'actions_count', 'goals_count', 'traffic_sources_id'], 'integer'],
             [['started_at', 'last_action_at', 'first_activity_at', 'last_activity_at'], 'safe'],
             [['actions_value', 'goals_value'], 'number'],
+            [['session_id'], 'string', 'max' => 256],
             [['ip'], 'string', 'max' => 45],
+            [['first_visited_page_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['first_visited_page_id' => 'id']],
         ];
     }
 
@@ -60,6 +63,7 @@ class VisitorSession extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'visitor_id' => 'Visitor ID',
+            'session_id' => 'Session ID',
             'started_at' => 'Started At',
             'last_action_at' => 'Last Action At',
             'ip' => 'Ip',

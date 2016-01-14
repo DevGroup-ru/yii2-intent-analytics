@@ -136,6 +136,7 @@ class m151228_072508_yii2_intent_analytics extends Migration
             [
                 'id' => $this->primaryKey(),
                 'visitor_id' => $this->integer(10)->notNull(),
+                'session_id' => $this->string(256),
                 'started_at' => $this->dateTime()->notNull(),
                 'last_action_at' => $this->dateTime()->notNull(),
                 'ip' => $this->string(45)->defaultValue(null),
@@ -151,6 +152,7 @@ class m151228_072508_yii2_intent_analytics extends Migration
                 'traffic_sources_id' => $this->integer(10)->notNull(),
             ], $tableOptions);
         $this->createIndex('fk_VisitorSession_Visitor1_idx', '{{%visitor_session}}', 'visitor_id');
+        $this->createIndex('sesion_idSession_Visitor', '{{%visitor_session}}', 'session_id');
         $this->createIndex('fk_visitor_session_visited_page1_idx', '{{%visitor_session}}', 'first_visited_page_id');
         $this->createIndex('fk_visitor_session_visited_page2_idx', '{{%visitor_session}}', 'last_visited_page_id');
         $this->createIndex('fk_visitor_session_traffic_sources1_idx', '{{%visitor_session}}', 'traffic_sources_id');

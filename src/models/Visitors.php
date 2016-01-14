@@ -1,31 +1,31 @@
 <?php
-namespace app\models;
+namespace DevGroup\Analytics\models;
 
 use Yii;
 use app;
 use yii\web\Session;
 use yii\web\Request;
-use PragmaRX\Tracker\Tracker;
 
 
-use app\models\VisitedPage;
-use app\models\Visitor;
-use app\models\Cities;
-use app\models\Countries;
+use DevGroup\Analytics\models\VisitedPage;
+use DevGroup\Analytics\models\Visitor;
+use DevGroup\Analytics\models\Cities;
+use DevGroup\Analytics\models\Countries;
 
-use GeoIp2\Database\Reader;
-use app\models\VisitorSession;
+use DevGroup\Analytics\models\VisitorSession;
 
 class Visitors extends Session
 {
 
-    public function test()
-    {
+    private $_keyCookie = 'IDs';
 
-        if (isset($_SERVER['HTTP_COOKIE'])) {
-            $CP = $this->cookieParser($_SERVER['HTTP_COOKIE']);
-//            var_dump($CP);
-//            die;
+    public function __construct()
+    {
+        if (!$this->getCookieValue()) {
+            $visitorId = $this->setCookie($this->addVisitor());
+        } else {
+            $visitor = new Visitor();
+            $visitorId = $visitor->findOne(['id' => $this->getCookieValue()])->id;
         }
 
         $visitorSession = new VisitorSession();
@@ -45,11 +45,13 @@ class Visitors extends Session
         $visitorSession->traffic_sources_id;
         var_dump($visitorSession->save());
 
-        die;
-
-        $visitorSession->geo_city_id = $city;
-        var_dump($visitorSession);
-        die;
+        if ($visitorSession->findOne([
+                'visitor_id' => $visitorId,
+                'session_id' => $this->id
+            ]) === null) {
+            $this->addSession($visitorId);
+        }
+        return true;
     }
 
     /**
@@ -61,7 +63,7 @@ class Visitors extends Session
     }
 
     /**
-     * @param $urlReferrer
+     * @param $link
      */
     public function getPageId($urlReferrer)
     {
