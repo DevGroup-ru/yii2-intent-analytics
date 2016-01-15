@@ -51,7 +51,7 @@ class VisitorSession extends \yii\db\ActiveRecord
             [['actions_value', 'goals_value'], 'number'],
             [['session_id'], 'string', 'max' => 256],
             [['ip'], 'string', 'max' => 45],
-            [['first_visited_page_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['first_visited_page_id' => 'id']],
+//            [['first_visited_page_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['first_visited_page_id' => 'id']],
         ];
     }
 
