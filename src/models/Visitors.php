@@ -19,24 +19,31 @@ class Visitors extends Session
 
     private $_keyCookie = 'IDs';
 
+    private $_visitorId = 'visitor_id';
+
+    private $_sessionId = 'session_id';
+
+
+    /**
+     * @return int
+     */
+    private function sessionLifeTime()
+    {
+        return time() + 30;
+    }
+
     public function __construct()
     {
-        if (!$this->getCookieValue()) {
-            $visitorId = $this->setCookie($this->addVisitor());
-        } else {
-            $visitor = new Visitor();
-            $visitorId = $visitor->findOne(['id' => $this->getCookieValue()])->id;
+
+        $this->init();
+
+        if ($this->get($this->_sessionId, false)) {
+            VisitorSession::updateAll([
+                'last_action_at' => date('Y-m-d H:i:s'),
+                'last_visited_page_id' => $this->getPageId(Yii::$app->request->url)
+            ], ['=', 'id', $this->get($this->_sessionId, false)]);
         }
 
-        $visitorSession = new VisitorSession();
-
-        if ($visitorSession->findOne([
-                'visitor_id' => $visitorId,
-                'session_id' => $this->id
-            ]) === null) {
-            $this->addSession($visitorId);
-        }
-        return true;
     }
 
     /**
@@ -55,6 +62,7 @@ class Visitors extends Session
         $page = new VisitedPage();
         $checkPage = $page->findOne(['url' => $link]);
 
+
         if ($link !== null && empty($checkPage)) {
             $page->route = '';
             $page->param = '';
@@ -66,42 +74,6 @@ class Visitors extends Session
         } else {
             return null;
         }
-
-    }
-
-    /**
-     * @param $ip
-     * @return array
-     */
-    public function getGeoLocation($ip)
-    {
-        $record = false;
-        $reader = new Reader('/home/user/www/dotplant3/dotplant3/GeoLite2-City.mmdb', ['ru']);
-        try {
-            $record = $reader->city($ip);
-        } catch (\Exception $e) {
-//            print_r($e);
-        }
-
-        if ($record !== false) {
-            $country = ($record->country->geonameId);
-            $city = ($record->city->geonameId);
-            return [$country, $city];
-        } else {
-            return [null, null];
-        }
-    }
-
-    public function cookieParser($str)
-    {
-        $cookies = [];
-
-        foreach (explode('; ', $str) as $k => $v) {
-            preg_match('/^(.*?)=(.*?)$/i', trim($v), $matches);
-            $cookies[trim($matches[1])] = urldecode($matches[2]);
-        }
-
-        return $cookies;
     }
 
     /**
@@ -147,21 +119,21 @@ class Visitors extends Session
     /**
      * @return mixed
      */
-    private function getCookieValue()
+    private function getCookieValue($key)
     {
-        return Yii::$app->getRequest()->getCookies()->getValue($this->_keyCookie, false);
+        return Yii::$app->getRequest()->getCookies()->getValue($key, false);
     }
 
     /**
      * @param $cookies
      */
-    private function setCookie($value)
+    private function setCookie($key, $value, $timeExpire = 0)
     {
         $cookies = Yii::$app->response->cookies;
         $cookies->add(new \yii\web\Cookie([
-            'name' => $this->_keyCookie,
+            'name' => $key,
             'value' => $value,
-            'expire' => $this->timeExpire(),
+            'expire' => $timeExpire,
         ]));
         return $value;
     }
@@ -224,4 +196,29 @@ class Visitors extends Session
         return Yii::$app->request->referrer;
     }
 
+    public function init()
+    {
+        if (!$this->get($this->_visitorId, false) && !$this->get($this->_sessionId, false)) {
+            if (!$this->getCookieValue($this->_keyCookie)) {
+                $this->_visitorId = $this->setCookie($this->_keyCookie, $this->addVisitor(), $this->timeExpire());
+                $this->_sessionId = $this->addSession($this->_visitorId);
+            } else {
+                $visitor = new Visitor();
+                $this->_visitorId = $visitor->findOne(['id' => $this->getCookieValue($this->_keyCookie)])->id;
+
+                $visitorSession = new VisitorSession();
+                $this->_sessionId = $visitorSession->findOne([
+                    'visitor_id' => $this->_visitorId,
+                    'session_id' => $this->id
+                ]);
+
+                if ($this->_sessionId === null) {
+                    $this->_sessionId = $this->addSession($this->_visitorId);
+                }
+            }
+
+            $this->set('visitor_id', $this->_visitorId);
+            $this->set('session_id', $this->_sessionId);
+        }
+    }
 }
