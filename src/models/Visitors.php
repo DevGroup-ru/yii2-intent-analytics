@@ -17,11 +17,26 @@ use DevGroup\Analytics\models\VisitorSession;
 class Visitors extends Session
 {
 
-    private $_keyCookie = 'IDs';
+    public $_keyCookie = 'IDs';
 
-    private $_visitorId = 'visitor_id';
+    public $_visitorId = 'visitor_id';
 
-    private $_sessionId = 'session_id';
+    public $_sessionId = 'session_id';
+
+
+    /**
+     * @return int|mixed|null|string
+     */
+    public function getRefererId()
+    {
+        $referer = $this->getReferrer();
+
+        if ($referer !== null) {
+            return $this->getPageId($referer);
+        } else {
+            return null;
+        }
+    }
 
 
     /**
@@ -34,6 +49,7 @@ class Visitors extends Session
 
     public function __construct()
     {
+
 
         $this->init();
 
@@ -52,6 +68,7 @@ class Visitors extends Session
             ], ['=', 'id', $this->get($this->_visitorId, false)]);
         }
 
+
     }
 
     /**
@@ -67,21 +84,14 @@ class Visitors extends Session
      */
     public function getPageId($link)
     {
-        $page = new VisitedPage();
-        $checkPage = $page->findOne(['url' => $link]);
-
-
-        if ($link !== null && empty($checkPage)) {
-            $page->route = '';
-            $page->param = '';
-            $page->url = $link;
-            $page->save();
-            return Yii::$app->db->getLastInsertId();
-        } elseif ($link !== null) {
-            return $checkPage->id;
+        if ($pageId = Yii::$app->cache->get($link)) {
+            return $pageId;
         } else {
-            return null;
+            $pageId = $this->getPageIdFromDB($link);
+            Yii::$app->cache->set($link, $pageId, 24 * 60 * 60);
+            return $pageId;
         }
+
     }
 
     /**
@@ -155,7 +165,7 @@ class Visitors extends Session
         $visitor = new Visitor();
         $visitor->user_id;
         $visitor->first_visit_at = $this->firstActivityAt();
-        $visitor->first_visit_referer = $this->getPageId($this->getReferrer());
+        $visitor->first_visit_referer = $this->getRefererId();
         $visitor->first_visit_visited_page_id = $this->getPageId($url);
         $visitor->first_traffic_sources_id = $this->getPageId($url);
         $visitor->last_activity_at = $this->lastActivityAt();
@@ -227,6 +237,29 @@ class Visitors extends Session
 
             $this->set('visitor_id', $this->_visitorId);
             $this->set('session_id', $this->_sessionId);
+        }
+    }
+
+
+    /**
+     * @param $link
+     * @return int|null|string
+     */
+    public function getPageIdFromDB($link)
+    {
+        $page = new VisitedPage();
+        $checkPage = $page->findOne(['url' => $link]);
+
+        if ($link !== null && empty($checkPage)) {
+            $page->route = '';
+            $page->param = '';
+            $page->url = $link;
+            $page->save();
+            return Yii::$app->db->getLastInsertId();
+        } elseif ($link !== null) {
+            return $checkPage->id;
+        } else {
+            return null;
         }
     }
 }
