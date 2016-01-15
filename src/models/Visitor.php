@@ -52,10 +52,10 @@ class Visitor extends \yii\db\ActiveRecord
             [['first_visit_at', 'last_activity_at'], 'safe'],
             [['overall_actions_value', 'overall_goals_value'], 'number'],
             [['first_visit_referer'], 'string', 'max' => 255],
-            [['first_visit_visited_page_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['first_visit_visited_page_id' => 'id']],
-            [['last_activity_visited_page_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['last_activity_visited_page_id' => 'id']],
-            [['first_traffic_sources_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['first_traffic_sources_id' => 'id']],
-            [['last_traffic_sources_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['last_traffic_sources_id' => 'id']],
+//            [['first_visit_visited_page_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['first_visit_visited_page_id' => 'id']],
+//            [['last_activity_visited_page_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['last_activity_visited_page_id' => 'id']],
+//            [['first_traffic_sources_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['first_traffic_sources_id' => 'id']],
+//            [['last_traffic_sources_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitedPage::className(), 'targetAttribute' => ['last_traffic_sources_id' => 'id']],
 //            [['last_traffic_sources_id'], 'exist', 'skipOnError' => true, 'targetClass' => VisitorSession::className(), 'targetAttribute' => ['last_traffic_sources_id' => 'visitor_id']],
         ];
     }
