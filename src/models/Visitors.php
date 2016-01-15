@@ -44,6 +44,14 @@ class Visitors extends Session
             ], ['=', 'id', $this->get($this->_sessionId, false)]);
         }
 
+        if ($this->get($this->_visitorId, false)) {
+            // incorrect
+            Visitor::updateAll([
+                'last_activity_at' => date('Y-m-d H:i:s'),
+                'last_activity_visited_page_id' => $this->getPageId(Yii::$app->request->url)
+            ], ['=', 'id', $this->get($this->_visitorId, false)]);
+        }
+
     }
 
     /**
