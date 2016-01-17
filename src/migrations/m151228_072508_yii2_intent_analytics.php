@@ -208,7 +208,21 @@ class m151228_072508_yii2_intent_analytics extends Migration
 
     public function down()
     {
+        $this->dropTable('{{%analytics_categories}}');
+        $this->dropTable('{{%analytics_goal}}');
+
         $this->dropTable('{{%intent}}');
+        $this->dropTable('{{%intent_detectors}}');
+        $this->dropTable('{{%intent_detectors_chain}}');
+
+        $this->dropTable('{{%visited}}');
+        $this->dropTable('{{%visited_page}}');
+        $this->dropTable('{{%visitor_session}}');
+        $this->dropTable('{{%visitor_session_goals}}');
+        $this->dropTable('{{%visitor_session_intents}}');
+
+        $this->dropTable('{{%self_reporting_block}}');
+        $this->dropTable('{{%traffic_sources}}');
         return false;
     }
 }
