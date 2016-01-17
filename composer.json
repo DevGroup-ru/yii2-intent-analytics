@@ -33,5 +33,11 @@
         "psr-4": {
             "DevGroup\\Analytics\\Tests\\": "tests/"
         }
+    },
+
+    "extra":{
+      "migrationPath": [
+        "src/migrations"
+      ]
     }
 }
