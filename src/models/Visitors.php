@@ -160,8 +160,8 @@ class Visitors extends Session
     {
         $url = Yii::$app->request->url;
         $visitor = new Visitor();
-// TODO if user authorized. add in the next iteration or for the future
-//        $visitor->user_id;
+//        TODO if visitor login add user Id
+//        $visitor->user_id = Yii::$app->user->getId();
         $visitor->first_visit_at = $this->firstActivityAt();
         $visitor->first_visit_referer = $this->getRefererId();
         $visitor->first_visit_visited_page_id = $this->getPageId($url);
@@ -170,10 +170,12 @@ class Visitors extends Session
         $visitor->last_activity_visited_page_id = $this->getPageId($url);
         $visitor->last_traffic_sources_id = 1;
 
+        list($country, $region, $city) = $this->getGeoLocation();
+        $visitor->geo_country_id = $country;
+        $visitor->geo_region_id = $region;
+        $visitor->geo_city_id = $city;
+
 // TODO add data param in the next iteration or for the future
-//        $visitor->geo_country_id;
-//        $visitor->geo_region_id;
-//        $visitor->geo_city_id;
 //        $visitor->intents_count;
 //        $visitor->sessions_count;
 //        $visitor->actions_count;
@@ -196,6 +198,7 @@ class Visitors extends Session
         $visitorSession->first_activity_at = $this->firstActivityAt();
         $visitorSession->last_visited_page_id = $this->getPageId(Yii::$app->request->url);
         $visitorSession->last_activity_at = $this->lastActivityAt();
+
 
 // TODO add data param in the next iteration or for the future
 //        $visitorSession->intents_count;
@@ -280,5 +283,19 @@ class Visitors extends Session
             'expire' => $timeExpire,
         ]));
         return $value;
+    }
+
+    /**
+     * @return array
+     */
+    private function getGeoLocation()
+    {
+        $geo = new \jisoft\sypexgeo\Sypexgeo();
+        $geo = $geo->get($this->getIpUser());
+
+        $country = $geo['country']['id'];
+        $region = $geo['region']['id'];
+        $city = $geo['city']['id'];
+        return array($country, $region, $city);
     }
 }
