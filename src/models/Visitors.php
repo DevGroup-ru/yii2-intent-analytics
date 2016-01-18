@@ -254,10 +254,11 @@ class Visitors extends Session
         return Yii::$app->request->referrer;
     }
 
+    /**
+     * @return array
+     */
     public function init()
     {
-        // check Session for visitor
-
         if (!$this->get($this::VISITOR_NAME_KEY, false) && !$this->get($this::SESSION_NAME_KEY, false)) {
             if (!$this->getCookieValue($this::KEY_COOKIE)) {
                 $visitorId = $this->addCookieReturnValue($this::KEY_COOKIE, $this->addVisitor(), $this->timeExpire());
@@ -285,7 +286,6 @@ class Visitors extends Session
             ];
         }
     }
-
 
     /**
      * @param $link
@@ -342,4 +342,5 @@ class Visitors extends Session
 
         return [$country, $region, $city];
     }
+
 }
