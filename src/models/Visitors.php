@@ -23,10 +23,14 @@ class Visitors extends Session
 
     const SESSION_NAME_KEY = 'session_id';
 
+    const USER_IF_AUTO = 'user_status';
+
 
     public $_statusAddLastVisitor = true;
 
     public $_statusAddLastSession = true;
+
+    public $_statusAddUser = true;
 
 
     /**
@@ -43,24 +47,24 @@ class Visitors extends Session
         }
     }
 
-    public function addLastVisitor()
+    public function addLastVisitor($visitorId)
     {
         if ($this->_statusAddLastVisitor && $this->get($this::SESSION_NAME_KEY, false)) {
             VisitorSession::updateAll([
                 'last_action_at' => date('Y-m-d H:i:s'),
                 'last_visited_page_id' => $this->getPageId(Yii::$app->request->url)
-            ], ['=', 'id', $this->get($this::SESSION_NAME_KEY, false)]);
+            ], ['=', 'id', $visitorId]);
         }
     }
 
-    public function addLastSession()
+    public function addLastSession($sessionId)
     {
         if ($this->_statusAddLastSession && $this->get($this::VISITOR_NAME_KEY, false)) {
             // incorrect
             Visitor::updateAll([
                 'last_activity_at' => date('Y-m-d H:i:s'),
                 'last_activity_visited_page_id' => $this->getPageId(Yii::$app->request->url)
-            ], ['=', 'id', $this->get($this::VISITOR_NAME_KEY, false)]);
+            ], ['=', 'id', $sessionId]);
         }
     }
 
@@ -76,11 +80,31 @@ class Visitors extends Session
     public function run()
     {
 
-        $this->init();
+        list($visitorId, $sessionId) = $this->init();
 
-        $this->addLastVisitor();
-        $this->addLastSession();
+        if ($visitorId !== null && $sessionId !== null) {
+
+//             if visitor first logged. add user id
+            if (
+                $this->_statusAddUser
+                && !$this->get($this::USER_IF_AUTO, false)
+                && Yii::$app->user->getId() !== null
+            ) {
+                Visitor::updateAll([
+                    'user_id' => Yii::$app->user->getId()
+                ], ['=', 'id', $visitorId]);
+
+                $this->set($this::USER_IF_AUTO, true);
+            }
+
+
+            $this->addLastVisitor($visitorId);
+
+            $this->addLastSession($sessionId);
+        }
+
     }
+
 
     /**
      * @return string
@@ -160,10 +184,12 @@ class Visitors extends Session
     {
         $url = Yii::$app->request->url;
         $visitor = new Visitor();
-//        TODO if visitor login add user Id
-//        $visitor->user_id = Yii::$app->user->getId();
+
         $visitor->first_visit_at = $this->firstActivityAt();
-        $visitor->first_visit_referer = $this->getRefererId();
+
+//          todo first_visit_referer string
+        $visitor->first_visit_referer = "" . $this->getRefererId();
+
         $visitor->first_visit_visited_page_id = $this->getPageId($url);
         $visitor->first_traffic_sources_id = $this->getPageId($url);
         $visitor->last_activity_at = $this->lastActivityAt();
@@ -175,14 +201,16 @@ class Visitors extends Session
         $visitor->geo_region_id = $region;
         $visitor->geo_city_id = $city;
 
-// TODO add data param in the next iteration or for the future
+//          TODO add data param in the next iteration or for the future
 //        $visitor->intents_count;
-//        $visitor->sessions_count;
+//        $visitor->sessions_count = 1;
 //        $visitor->actions_count;
 //        $visitor->goals_count;
 //        $visitor->overall_actions_value;
 //        $visitor->overall_goals_value;
+
         $visitor->save();
+
         return $visitor->id;
     }
 
@@ -199,7 +227,7 @@ class Visitors extends Session
         $visitorSession->last_visited_page_id = $this->getPageId(Yii::$app->request->url);
         $visitorSession->last_activity_at = $this->lastActivityAt();
 
-//          TODO add data param in the next iteration or for the future
+//        TODO add data param in the next iteration or for the future
 //        $visitorSession->intents_count;
 //        $visitorSession->actions_count;
 //        $visitorSession->goals_count;
@@ -208,6 +236,12 @@ class Visitors extends Session
 //        todo When traffic uncommented result
         $visitorSession->traffic_sources_id = 0;
         $visitorSession->save();
+
+        Visitor::updateAll([
+            'sessions_count' => count(VisitorSession::findAll(['visitor_id' => $visitorId]))
+        ], [
+            '=', 'id', $visitorId
+        ]);
 
         return $visitorSession->id;
     }
@@ -223,6 +257,7 @@ class Visitors extends Session
     public function init()
     {
         // check Session for visitor
+
         if (!$this->get($this::VISITOR_NAME_KEY, false) && !$this->get($this::SESSION_NAME_KEY, false)) {
             if (!$this->getCookieValue($this::KEY_COOKIE)) {
                 $visitorId = $this->addCookieReturnValue($this::KEY_COOKIE, $this->addVisitor(), $this->timeExpire());
@@ -230,7 +265,7 @@ class Visitors extends Session
             } else {
                 $visitorId = Visitor::findOne(['id' => $this->getCookieValue($this::KEY_COOKIE)])->id;
                 $sessionId = VisitorSession::findOne([
-                    'visitor_id' => $this::VISITOR_NAME_KEY,
+                    'visitor_id' => $visitorId,
                     'session_id' => $this->id
                 ]);
 
@@ -241,6 +276,13 @@ class Visitors extends Session
 
             $this->set($this::VISITOR_NAME_KEY, $visitorId);
             $this->set($this::SESSION_NAME_KEY, $sessionId);
+
+            return [$visitorId, $sessionId];
+        } else {
+            return [
+                $this->get($this::VISITOR_NAME_KEY, false),
+                $this->get($this::SESSION_NAME_KEY, false)
+            ];
         }
     }
 
@@ -255,7 +297,6 @@ class Visitors extends Session
         $checkPage = $page->findOne(['url' => $link]);
 
         if ($link !== null && empty($checkPage)) {
-
 //              TODO add data param in the next iteration or for the future
 //            $page->route = '';
 //            $page->param = '';
