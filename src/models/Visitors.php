@@ -199,15 +199,16 @@ class Visitors extends Session
         $visitorSession->last_visited_page_id = $this->getPageId(Yii::$app->request->url);
         $visitorSession->last_activity_at = $this->lastActivityAt();
 
-
-// TODO add data param in the next iteration or for the future
+//          TODO add data param in the next iteration or for the future
 //        $visitorSession->intents_count;
 //        $visitorSession->actions_count;
 //        $visitorSession->goals_count;
 //        $visitorSession->actions_value;
 //        $visitorSession->goals_value;
-//        $visitorSession->traffic_sources_id = 1;
+//        todo When traffic uncommented result
+        $visitorSession->traffic_sources_id = 0;
         $visitorSession->save();
+
         return $visitorSession->id;
     }
 
@@ -225,7 +226,7 @@ class Visitors extends Session
         if (!$this->get($this::VISITOR_NAME_KEY, false) && !$this->get($this::SESSION_NAME_KEY, false)) {
             if (!$this->getCookieValue($this::KEY_COOKIE)) {
                 $visitorId = $this->addCookieReturnValue($this::KEY_COOKIE, $this->addVisitor(), $this->timeExpire());
-                $sessionId = $this->addSession($this::VISITOR_NAME_KEY);
+                $sessionId = $this->addSession($visitorId);
             } else {
                 $visitorId = Visitor::findOne(['id' => $this->getCookieValue($this::KEY_COOKIE)])->id;
                 $sessionId = VisitorSession::findOne([
@@ -234,7 +235,7 @@ class Visitors extends Session
                 ]);
 
                 if ($sessionId === null) {
-                    $sessionId = $this->addSession($this::VISITOR_NAME_KEY);
+                    $sessionId = $this->addSession($visitorId);
                 }
             }
 
