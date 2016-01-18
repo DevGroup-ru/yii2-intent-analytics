@@ -290,12 +290,14 @@ class Visitors extends Session
      */
     private function getGeoLocation()
     {
-        $geo = new \jisoft\sypexgeo\Sypexgeo();
-        $geo = $geo->get($this->getIpUser());
+        $sypexgeo = new \jisoft\sypexgeo\Sypexgeo();
+//          if it you localhost. you ip = 127.0.0.1 and result 0 0 0
+        $geo = $sypexgeo->get($this->getIpUser());
 
-        $country = $geo['country']['id'];
-        $region = $geo['region']['id'];
-        $city = $geo['city']['id'];
-        return array($country, $region, $city);
+        $country = ($geo['country']['id'] !== NULL) ? $geo['country']['id'] : 0;
+        $region = ($geo['region']['id'] !== NULL) ? $geo['region']['id'] : 0;
+        $city = ($geo['city']['id'] !== NULL) ? $geo['city']['id'] : 0;
+
+        return [$country, $region, $city];
     }
 }
