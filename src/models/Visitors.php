@@ -17,11 +17,11 @@ use DevGroup\Analytics\models\VisitorSession;
 class Visitors extends Session
 {
 
-    public $_keyCookie = 'visitor';
+    const KEY_COOKIE = 'visitor';
 
-    public $_visitorIdNameKey = 'visitor_id';
+    const VISITOR_NAME_KEY = 'visitor_id';
 
-    public $_sessionIdNameKey = 'session_id';
+    const SESSION_NAME_KEY = 'session_id';
 
 
     public $_statusAddLastVisitor = true;
@@ -45,22 +45,22 @@ class Visitors extends Session
 
     public function addLastVisitor()
     {
-        if ($this->_statusAddLastVisitor && $this->get($this->_sessionIdNameKey, false)) {
+        if ($this->_statusAddLastVisitor && $this->get($this::SESSION_NAME_KEY, false)) {
             VisitorSession::updateAll([
                 'last_action_at' => date('Y-m-d H:i:s'),
                 'last_visited_page_id' => $this->getPageId(Yii::$app->request->url)
-            ], ['=', 'id', $this->get($this->_sessionIdNameKey, false)]);
+            ], ['=', 'id', $this->get($this::SESSION_NAME_KEY, false)]);
         }
     }
 
     public function addLastSession()
     {
-        if ($this->_statusAddLastSession && $this->get($this->_visitorIdNameKey, false)) {
+        if ($this->_statusAddLastSession && $this->get($this::VISITOR_NAME_KEY, false)) {
             // incorrect
             Visitor::updateAll([
                 'last_activity_at' => date('Y-m-d H:i:s'),
                 'last_activity_visited_page_id' => $this->getPageId(Yii::$app->request->url)
-            ], ['=', 'id', $this->get($this->_visitorIdNameKey, false)]);
+            ], ['=', 'id', $this->get($this::VISITOR_NAME_KEY, false)]);
         }
     }
 
@@ -73,15 +73,13 @@ class Visitors extends Session
         return time() + 30;
     }
 
-    public function __construct()
+    public function run()
     {
 
         $this->init();
 
         $this->addLastVisitor();
-
         $this->addLastSession();
-
     }
 
     /**
@@ -221,24 +219,24 @@ class Visitors extends Session
     public function init()
     {
         // check Session for visitor
-        if (!$this->get($this->_visitorIdNameKey, false) && !$this->get($this->_sessionIdNameKey, false)) {
-            if (!$this->getCookieValue($this->_keyCookie)) {
-                $visitorId = $this->addCookieReturnValue($this->_keyCookie, $this->addVisitor(), $this->timeExpire());
-                $sessionId = $this->addSession($this->_visitorIdNameKey);
+        if (!$this->get($this::VISITOR_NAME_KEY, false) && !$this->get($this::SESSION_NAME_KEY, false)) {
+            if (!$this->getCookieValue($this::KEY_COOKIE)) {
+                $visitorId = $this->addCookieReturnValue($this::KEY_COOKIE, $this->addVisitor(), $this->timeExpire());
+                $sessionId = $this->addSession($this::VISITOR_NAME_KEY);
             } else {
-                $visitorId = Visitor::findOne(['id' => $this->getCookieValue($this->_keyCookie)])->id;
+                $visitorId = Visitor::findOne(['id' => $this->getCookieValue($this::KEY_COOKIE)])->id;
                 $sessionId = VisitorSession::findOne([
-                    'visitor_id' => $this->_visitorIdNameKey,
+                    'visitor_id' => $this::VISITOR_NAME_KEY,
                     'session_id' => $this->id
                 ]);
 
-                if ($this->_sessionIdNameKey === null) {
-                    $this->_sessionIdNameKey = $this->addSession($this->_visitorIdNameKey);
+                if ($sessionId === null) {
+                    $sessionId = $this->addSession($this::VISITOR_NAME_KEY);
                 }
             }
 
-            $this->set($this->_visitorIdNameKey, $visitorId);
-            $this->set($this->_sessionIdNameKey, $sessionId);
+            $this->set($this::VISITOR_NAME_KEY, $visitorId);
+            $this->set($this::SESSION_NAME_KEY, $sessionId);
         }
     }
 
