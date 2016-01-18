@@ -17,11 +17,16 @@ use DevGroup\Analytics\models\VisitorSession;
 class Visitors extends Session
 {
 
-    public $_keyCookie = 'IDs';
+    public $_keyCookie = 'visitor';
 
     public $_visitorId = 'visitor_id';
 
     public $_sessionId = 'session_id';
+
+
+    public $_addLastVisitor = true;
+
+    public $_addLastSession = true;
 
 
     /**
@@ -38,6 +43,27 @@ class Visitors extends Session
         }
     }
 
+    public function addLastVisitor()
+    {
+        if ($this->_addLastVisitor && $this->get($this->_sessionId, false)) {
+            VisitorSession::updateAll([
+                'last_action_at' => date('Y-m-d H:i:s'),
+                'last_visited_page_id' => $this->getPageId(Yii::$app->request->url)
+            ], ['=', 'id', $this->get($this->_sessionId, false)]);
+        }
+    }
+
+    public function addLastSession()
+    {
+        if ($this->_addLastSession && $this->get($this->_visitorId, false)) {
+            // incorrect
+            Visitor::updateAll([
+                'last_activity_at' => date('Y-m-d H:i:s'),
+                'last_activity_visited_page_id' => $this->getPageId(Yii::$app->request->url)
+            ], ['=', 'id', $this->get($this->_visitorId, false)]);
+        }
+    }
+
 
     /**
      * @return int
@@ -50,24 +76,11 @@ class Visitors extends Session
     public function __construct()
     {
 
-
         $this->init();
 
-        if ($this->get($this->_sessionId, false)) {
-            VisitorSession::updateAll([
-                'last_action_at' => date('Y-m-d H:i:s'),
-                'last_visited_page_id' => $this->getPageId(Yii::$app->request->url)
-            ], ['=', 'id', $this->get($this->_sessionId, false)]);
-        }
+        $this->addLastVisitor();
 
-        if ($this->get($this->_visitorId, false)) {
-            // incorrect
-            Visitor::updateAll([
-                'last_activity_at' => date('Y-m-d H:i:s'),
-                'last_activity_visited_page_id' => $this->getPageId(Yii::$app->request->url)
-            ], ['=', 'id', $this->get($this->_visitorId, false)]);
-        }
-
+        $this->addLastSession();
 
     }
 
