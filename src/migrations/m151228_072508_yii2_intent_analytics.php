@@ -193,8 +193,9 @@ class m151228_072508_yii2_intent_analytics extends Migration
 
         $this->addForeignKey('fk_Visitor_VisitedPage_first', 'visitor', 'first_visit_visited_page_id', 'visited_page', 'id');
         $this->addForeignKey('fk_Visitor_VisitedPage_last', 'visitor', 'last_activity_visited_page_id', 'visited_page', 'id');
-        $this->addForeignKey('fk_visitor_traffic_sources1', 'visitor', 'first_traffic_sources_id', 'visited_page', 'id');
-        $this->addForeignKey('fk_visitor_traffic_sources2', 'visitor', 'last_traffic_sources_id', 'visited_page', 'id');
+//          TODO when traffic add uncommented
+//        $this->addForeignKey('fk_visitor_traffic_sources1', 'visitor', 'first_traffic_sources_id', 'visited_page', 'id');
+//        $this->addForeignKey('fk_visitor_traffic_sources2', 'visitor', 'last_traffic_sources_id', 'visited_page', 'id');
 //        $this->addForeignKey('visitor_ibfk_1', 'visitor', 'last_traffic_sources_id', 'visitor_session', 'visitor_id');
 
 //        $this->addForeignKey('visitor_session_ibfk_1', 'visitor_session', 'id', 'visitor_session_goals', 'visitor_session_id');
