@@ -19,7 +19,9 @@
     "require": {
         "yiisoft/yii2": "^2.0.6",
         "jisoft/yii2-sypexgeo": "dev-master",
-        "devgroup/yii2-tag-dependency-helper": "^1.2.0"
+        "devgroup/yii2-tag-dependency-helper": "^1.2.0",
+        "devgroup/yii2-multilingual-sypexgeodaemon": "dev-master",
+        "devgroup/yii2-multilingual": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
