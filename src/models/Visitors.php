@@ -332,13 +332,12 @@ class Visitors extends Session
      */
     private function getGeoLocation()
     {
-        $sypexgeo = new \jisoft\sypexgeo\Sypexgeo();
-//          if it you localhost. you ip = 127.0.0.1 and result 0 0 0
-        $geo = $sypexgeo->get($this->getIpUser());
+        //          if it you localhost. you ip = 127.0.0.1 and result 0 0 0
+        $geo = Yii::$app->multilingual->geo();
 
-        $country = ($geo['country']['id'] !== NULL) ? $geo['country']['id'] : 0;
-        $region = ($geo['region']['id'] !== NULL) ? $geo['region']['id'] : 0;
-        $city = ($geo['city']['id'] !== NULL) ? $geo['city']['id'] : 0;
+        $country = ($geo!==null && $geo->country->id !== NULL) ? $geo->country->id : 0;
+        $region = ($geo!==null && $geo->region->id !== NULL) ? $geo->region->id : 0;
+        $city = ($geo!==null && $geo->city->id !== NULL) ? $geo->city->id : 0;
 
         return [$country, $region, $city];
     }
