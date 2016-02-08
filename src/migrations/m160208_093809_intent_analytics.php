@@ -14,21 +14,21 @@ class m160208_093809_intent_analytics extends Migration
         //--------------------------------------------------------------------------------------------------------------
         $this->createTable('{{%ia_analytics_categories}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string(250),
+            'name' => $this->string(250)->defaultValue(''),
         ], $tableOptions);
 
         //--------------------------------------------------------------------------------------------------------------
         $this->createTable('{{%ia_analytics_goal}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string(250),
+            'name' => $this->string(250)->defaultValue(''),
             'is_transactional' => $this->boolean()->notNull()->defaultValue(0),
             'analytics_categories_id' => $this->integer()->notNull(),
-            'ga_action_name' => $this->string(250),
+            'ga_action_name' => $this->string(250)->defaultValue(''),
             'ga_value' => $this->integer()->unsigned(),
-            'ga_label' => $this->string(250),
-            'ym_goal' => $this->string(250),
-            'custom_params' => $this->string(250),
-            'once_per_session' => $this->boolean()->notNull()->defaultValue(0),
+            'ga_label' => $this->string(250)->defaultValue(''),
+            'ym_goal' => $this->string(250)->defaultValue(''),
+            'custom_params' => $this->string(250)->defaultValue(''),
+            'once_per_visit' => $this->boolean()->notNull()->defaultValue(0),
             'once_per_visitor' => $this->boolean()->notNull()->defaultValue(0),
         ], $tableOptions);
 
@@ -43,7 +43,7 @@ class m160208_093809_intent_analytics extends Migration
         //--------------------------------------------------------------------------------------------------------------
         $this->createTable('{{%ia_self_reporting_block}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string(250),
+            'name' => $this->string(250)->defaultValue(''),
             'analytics_goal_id' => $this->integer()->notNull(),
             'track_inview' => $this->boolean()->notNull()->defaultValue(0),
             'inview_delay' => $this->integer()->unsigned()->notNull()->defaultValue(0),
@@ -64,23 +64,23 @@ class m160208_093809_intent_analytics extends Migration
         //--------------------------------------------------------------------------------------------------------------
         $this->createTable('{{%ia_intent}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string(250),
+            'name' => $this->string(250)->defaultValue(''),
             'timeout' => $this->integer()->unsigned()->notNull()->defaultValue(0),
         ], $tableOptions);
 
         //--------------------------------------------------------------------------------------------------------------
         $this->createTable('{{%ia_traffic_sources}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string(250),
-            'class_name' => $this->string(250),
+            'name' => $this->string(250)->defaultValue(''),
+            'class_name' => $this->string(250)->defaultValue(''),
             'params' => $this->text(),
         ], $tableOptions);
 
         //--------------------------------------------------------------------------------------------------------------
         $this->createTable('{{%ia_intent_detectors}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string(250)->notNull(),
-            'class_name' => $this->string(250)->notNull(),
+            'name' => $this->string(250)->defaultValue('')->notNull(),
+            'class_name' => $this->string(250)->defaultValue('')->notNull(),
             'params' => $this->text(),
             'needs_traffic_sources_id' => $this->integer()->notNull()->defaultValue(0),
         ], $tableOptions);
@@ -98,8 +98,8 @@ class m160208_093809_intent_analytics extends Migration
             'intent_id' => $this->integer()->notNull(),
             'intent_detectors_id' => $this->integer()->notNull(),
             'sort_order' => $this->integer(),
-            'name' => $this->string(250)->notNull(),
-            'class_name' => $this->string(250)->notNull(),
+            'name' => $this->string(250)->defaultValue('')->notNull(),
+            'class_name' => $this->string(250)->defaultValue('')->notNull(),
             'params' => $this->text(),
             'needs_traffic_sources_id' => $this->integer()->notNull()->defaultValue(0),
         ], $tableOptions);
@@ -123,9 +123,9 @@ class m160208_093809_intent_analytics extends Migration
         //--------------------------------------------------------------------------------------------------------------
         $this->createTable('{{%ia_visited_page}}', [
             'id' => $this->primaryKey(),
-            'route' => $this->string(250),
+            'route' => $this->string(250)->defaultValue(''),
             'params' => $this->text(),
-            'url' => $this->string(500),
+            'url' => $this->string(500)->defaultValue(''),
         ], $tableOptions);
         $this->createIndex('byRoute', '{{%ia_visited_page}}', ['route']);
         $this->createIndex('byUrl', '{{%ia_visited_page}}', ['url']);
@@ -135,7 +135,7 @@ class m160208_093809_intent_analytics extends Migration
             'id' => $this->primaryKey(),
             'user_id' => $this->integer()->unsigned()->notNull()->defaultValue(0),
             'first_visit_at' => $this->dateTime(),
-            'first_visit_referrer' => $this->string(500),
+            'first_visit_referrer' => $this->string(500)->defaultValue(''),
             'first_visit_visited_page_id' => $this->integer()->notNull()->defaultValue(0),
             'first_traffic_sources_id' => $this->integer(),
             'last_activity_at' => $this->dateTime(),
@@ -191,7 +191,7 @@ class m160208_093809_intent_analytics extends Migration
             'visitor_id' => $this->integer()->notNull()->defaultValue(0),
             'started_at' => $this->dateTime()->notNull(),
             'last_action_at' => $this->dateTime(),
-            'ip' => $this->string(45),
+            'ip' => $this->string(45)->defaultValue(''),
             'first_visited_page_id' => $this->integer()->notNull(),
             'first_activity_at' => $this->dateTime()->notNull(),
             'last_visited_page_id' => $this->integer()->notNull(),
@@ -213,21 +213,21 @@ class m160208_093809_intent_analytics extends Migration
             ['id']
         );
         $this->addForeignKey(
-            'fk_visitor_session_visited_page1',
+            'fk_visitor_visit_visited_page1',
             '{{%ia_visitor_visit}}',
             ['first_visited_page_id'],
             '{{%ia_visited_page}}',
             ['id']
         );
         $this->addForeignKey(
-            'fk_visitor_session_visited_page2',
+            'fk_visitor_visit_visited_page2',
             '{{%ia_visitor_visit}}',
             ['last_visited_page_id'],
             '{{%ia_visited_page}}',
             ['id']
         );
         $this->addForeignKey(
-            'fk_visitor_session_traffic_sources1',
+            'fk_visitor_visit_traffic_sources1',
             '{{%ia_visitor_visit}}',
             ['traffic_sources_id'],
             '{{%ia_traffic_sources}}',
@@ -244,14 +244,14 @@ class m160208_093809_intent_analytics extends Migration
         $this->addPrimaryKey('PRIMARY KEY', '{{%ia_visitor_visit_intents}}', ['visitor_visit_id', 'intent_id']);
 
         $this->addForeignKey(
-            'fk_visitor_session_intents_visitor_session1',
+            'fk_visitor_visit_intents_visitor_visit1',
             '{{%ia_visitor_visit_intents}}',
             ['visitor_visit_id'],
             '{{%ia_visitor_visit}}',
             ['id']
         );
         $this->addForeignKey(
-            'fk_visitor_session_intents_visited_page1',
+            'fk_visitor_visit_intents_visited_page1',
             '{{%ia_visitor_visit_intents}}',
             ['detected_visited_page_id'],
             '{{%ia_visited_page}}',
@@ -269,21 +269,21 @@ class m160208_093809_intent_analytics extends Migration
         $this->addPrimaryKey('PRIMARY KEY', '{{%ia_visitor_visit_goals}}', ['visitor_visit_id', 'analytics_goal_id']);
 
         $this->addForeignKey(
-            'fk_visitor_session_goals_visitor_session1',
+            'fk_visitor_visit_goals_visitor_visit1',
             '{{%ia_visitor_visit_goals}}',
             ['visitor_visit_id'],
             '{{%ia_visitor_visit}}',
             ['id']
         );
         $this->addForeignKey(
-            'fk_visitor_session_goals_visited_page1',
+            'fk_visitor_visit_goals_visited_page1',
             '{{%ia_visitor_visit_goals}}',
             ['visited_page_id'],
             '{{%ia_visited_page}}',
             ['id']
         );
         $this->addForeignKey(
-            'fk_visitor_session_goals_analytics_goal1',
+            'fk_visitor_visit_goals_analytics_goal1',
             '{{%ia_visitor_visit_goals}}',
             ['analytics_goal_id'],
             '{{%ia_analytics_goal}}',
@@ -293,6 +293,7 @@ class m160208_093809_intent_analytics extends Migration
 
     public function down()
     {
+
         $this->dropTable('{{%ia_visitor_visit_goals}}');
         $this->dropTable('{{%ia_visitor_visit_intents}}');
         $this->dropTable('{{%ia_visitor_visit}}');
