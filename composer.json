@@ -1,6 +1,6 @@
 {
     "name": "devgroup/yii2-intent-analytics",
-    "description": "Allows building yii2 apps for multiple languages using regional URL's and domains",
+    "description": "Visitors intent analytics and integration with Google Analytics and Yandex.Metrika for Yii framework 2",
     "type": "yii2-extension",
     "keywords": ["yii2","extension","analytics", "metrika", "google analytics", "intent", "statistics"],
     "homepage": "http://www.devgroup.ru/",
@@ -32,5 +32,16 @@
         "psr-4": {
             "DevGroup\\Analytics\\Tests\\": "tests/"
         }
+    },
+    "extra": {
+        "yii2-extension": {
+            "name": "Analytics",
+            "name_ru": "Аналитика",
+            "iconUrl": "https://st-1.dotplant.ru/images/ext-sample.png",
+            "description": "Visitors intent analytics and integration with Google Analytics and Yandex.Metrika for Yii framework 2",
+            "description_ru": "Аналитика посещаемости с интеграцией с Google Analytics и Yandex.Metrika для Yii framework 2"
+        },
+        "migrationPath": ["src/migrations/"],
+        "translationCategory": "extension.analytics"
     }
 }
