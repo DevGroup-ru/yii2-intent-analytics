@@ -29,7 +29,9 @@ Add module:
 //            'storeLastActivity' => true,
 //            'storeVisitedPages' => true,
 //            'visitorCookieName' => 'visitor_id',
-//            'visitorCookieTime' = 61516800,
+//            'visitorCookieTime' => 61516800,
+//            'visitorCookieExpireTime' => 3758400,
+//            'i18category' => 'IntentAnalyticsModule',
 //            'modelMap' => [
 //                'Visitor' => [
 //                    'class' => 'DevGroup\Analytics\models\Visitor',
@@ -37,10 +39,4 @@ Add module:
 //            ],
         ],
         ...
-```
-
-Add 'analytics' in 'bootstrap' section
-
-```php
-'bootstrap' => [..., 'analytics'],
 ```

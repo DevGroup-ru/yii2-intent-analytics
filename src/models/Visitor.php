@@ -2,6 +2,7 @@
 
 namespace DevGroup\Analytics\models;
 
+use DevGroup\Analytics\IntentAnalyticsModule;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
@@ -77,25 +78,26 @@ class Visitor extends \yii\db\ActiveRecord
      */
     public function attributeLabels()
     {
+        $category = IntentAnalyticsModule::module()->i18category . '.model';
         return [
-            'id' => 'ID',
-            'user_id' => 'User ID',
-            'first_visit_at' => 'First Visit At',
-            'first_visit_referrer' => 'First Visit Referrer',
-            'first_visit_visited_page_id' => 'First Visit Visited Page ID',
-            'first_traffic_sources_id' => 'First Traffic Sources ID',
-            'last_activity_at' => 'Last Activity At',
-            'last_activity_visited_page_id' => 'Last Activity Visited Page ID',
-            'last_traffic_sources_id' => 'Last Traffic Sources ID',
-            'geo_country_id' => 'Geo Country ID',
-            'geo_region_id' => 'Geo Region ID',
-            'geo_city_id' => 'Geo City ID',
-            'intents_count' => 'Intents Count',
-            'visits_count' => 'Visits Count',
-            'actions_count' => 'Actions Count',
-            'goals_count' => 'Goals Count',
-            'overall_actions_value' => 'Overall Actions Value',
-            'overall_goals_value' => 'Overall Goals Value',
+            'id' => Yii::t($category, 'ID'),
+            'user_id' => Yii::t($category, 'User ID'),
+            'first_visit_at' => Yii::t($category, 'First Visit At'),
+            'first_visit_referrer' => Yii::t($category, 'First Visit Referrer'),
+            'first_visit_visited_page_id' => Yii::t($category, 'First Visit Visited Page ID'),
+            'first_traffic_sources_id' => Yii::t($category, 'First Traffic Sources ID'),
+            'last_activity_at' => Yii::t($category, 'Last Activity At'),
+            'last_activity_visited_page_id' => Yii::t($category, 'Last Activity Visited Page ID'),
+            'last_traffic_sources_id' => Yii::t($category, 'Last Traffic Sources ID'),
+            'geo_country_id' => Yii::t($category, 'Geo Country ID'),
+            'geo_region_id' => Yii::t($category, 'Geo Region ID'),
+            'geo_city_id' => Yii::t($category, 'Geo City ID'),
+            'intents_count' => Yii::t($category, 'Intents Count'),
+            'visits_count' => Yii::t($category, 'Visits Count'),
+            'actions_count' => Yii::t($category, 'Actions Count'),
+            'goals_count' => Yii::t($category, 'Goals Count'),
+            'overall_actions_value' => Yii::t($category, 'Overall Actions Value'),
+            'overall_goals_value' => Yii::t($category, 'Overall Goals Value'),
         ];
     }
 
@@ -160,9 +162,12 @@ class Visitor extends \yii\db\ActiveRecord
      *
      * @return bool
      */
-    public function hasUser()
+    public function hasUserId()
     {
-        return $this->user_id !== 0;
+        if (Yii::$app->user->isGuest) {
+            return $this->user_id !== 0;
+        }
+        return $this->user_id == Yii::$app->user->identity->getId();
     }
 
     /**
@@ -171,7 +176,7 @@ class Visitor extends \yii\db\ActiveRecord
      * @param int $user_id
      * @return bool
      */
-    public function setUser($user_id)
+    public function setUserId($user_id)
     {
         $this->user_id = $user_id;
         return $this->save(true, ['user_id']);

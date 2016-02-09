@@ -85,6 +85,28 @@ class IntentAnalyticsModule extends Module implements BootstrapInterface
      */
     public $visitorCookieTime = 61516800;
 
+    /**
+     * Time in second when update cookie. Defaults to 1 year (3758400)
+     *
+     * @var int
+     */
+    public $visitorCookieExpireTime = 3758400;
+
+    /** @var string Application cache component name */
+    public $cache = 'cache';
+
+    /**
+     * @var int Cache lifetime in seconds. Defaults to 2 weeks(1209600).
+     */
+    public $cacheLifetime = 1209600;
+
+    /**
+     * Category for Yii::t
+     *
+     * @var string
+     */
+    public $i18category = 'IntentAnalyticsModule';
+
 
     public $modelMap = [];
 
@@ -110,7 +132,7 @@ class IntentAnalyticsModule extends Module implements BootstrapInterface
     {
         $this->buildModelMap();
         $app->on(Application::EVENT_AFTER_REQUEST, function () {
-            $this->saveInfo();
+            $this->process();
         });
     }
 
@@ -128,24 +150,39 @@ class IntentAnalyticsModule extends Module implements BootstrapInterface
     /**
      * Create Visitor record
      *
-     * @return int
+     * @return Visitor
      * @throws \yii\base\InvalidConfigException
      */
     private function createVisitor()
     {
         $this->visitor = Yii::$container->get($this->modelMap['Visitor']['class']);
         $this->visitor->save();
-        return $this->visitor->getPrimaryKey();
+        return $this->visitor;
     }
 
     /**
-     * Store visitor_id in session and in cookie and save model
-     *
-     * @param int $visitor_id
+     * Store visitor_id in session and if require in cookie
      */
     private function saveVisitor()
     {
         Yii::$app->session->set($this->visitorCookieName, $this->visitor->getPrimaryKey());
+
+        if (!Yii::$app->request->cookies->has($this->visitorCookieName)) {
+            $this->setVisitorCookie();
+            return;
+        }
+
+        $cookie = Yii::$app->request->cookies->get($this->visitorCookieName);
+        if ($cookie->expire - time() <= $this->visitorCookieExpireTime) {
+            $this->setVisitorCookie();
+        }
+    }
+
+    /**
+     * Add visitor cookie
+     */
+    private function setVisitorCookie()
+    {
         Yii::$app->response->cookies->add(new Cookie([
             'name' => $this->visitorCookieName,
             'value' => $this->visitor->getPrimaryKey(),
@@ -160,8 +197,11 @@ class IntentAnalyticsModule extends Module implements BootstrapInterface
      * @return bool
      * @throws \yii\base\InvalidConfigException
      */
-    private function hasVisitor($visitor_id)
+    public function hasVisitor($visitor_id)
     {
+        if ($this->visitor !== null) {
+            return true;
+        }
         /**
          * @var Visitor $model
          */
@@ -169,7 +209,7 @@ class IntentAnalyticsModule extends Module implements BootstrapInterface
         $this->visitor = $model->find()
             ->where(['id' => $visitor_id])
             ->one();
-        return boolval($this->visitor);
+        return $this->visitor !== null;
     }
 
     /**
@@ -179,28 +219,32 @@ class IntentAnalyticsModule extends Module implements BootstrapInterface
      */
     public function getVisitor()
     {
+        if ($this->visitor !== null) {
+            return $this->visitor;
+        }
+
         if (Yii::$app->session->has($this->visitorCookieName)) {
             $visitor_id = Yii::$app->session->get($this->visitorCookieName);
         } elseif (Yii::$app->request->cookies->has($this->visitorCookieName)) {
-            $visitor_id = Yii::$app->request->cookies->get($this->visitorCookieName);
+            $visitor_id = Yii::$app->request->cookies->getValue($this->visitorCookieName);
         }
-        if (!isset($visitor_id) || !$this->hasVisitor($visitor_id)) {
-            $this->createVisitor();
+        if (isset($visitor_id) && $this->hasVisitor($visitor_id)) {
+            return $this->visitor;
         }
 
-        $this->saveVisitor();
-        return $this->visitor;
+        return $this->createVisitor();
     }
 
     /**
      * Fills $this->visitor
      */
-    public function saveInfo()
+    public function process()
     {
         $this->getVisitor();
+        $this->saveVisitor();
 
-        if (!$this->visitor->hasUser() && !Yii::$app->user->isGuest) {
-            $this->visitor->setUser(Yii::$app->user->identity->getId());
+        if (!$this->visitor->hasUserId() && !Yii::$app->user->isGuest) {
+            $this->visitor->setUserId(Yii::$app->user->identity->getId());
         }
 
         if ($this->detectFirstVisitSource) {
@@ -218,5 +262,21 @@ class IntentAnalyticsModule extends Module implements BootstrapInterface
         if ($this->storeVisitedPages) {
 
         }
+    }
+
+    /**
+     * @return \yii\caching\Cache
+     */
+    public function cache()
+    {
+        return Yii::$app->get($this->cache);
+    }
+
+    /**
+     * @return IntentAnalyticsModule Module instance in application
+     */
+    public static function module()
+    {
+        return Yii::$app->getModule('analytics');
     }
 }
