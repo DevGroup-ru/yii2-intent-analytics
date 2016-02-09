@@ -37,7 +37,9 @@ class m160208_093809_intent_analytics extends Migration
             '{{%analytics_goal}}',
             ['analytics_categories_id'],
             '{{%analytics_categories}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
 
         //--------------------------------------------------------------------------------------------------------------
@@ -58,7 +60,9 @@ class m160208_093809_intent_analytics extends Migration
             '{{%self_reporting_block}}',
             ['analytics_goal_id'],
             '{{%analytics_goal}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
 
         //--------------------------------------------------------------------------------------------------------------
@@ -90,7 +94,9 @@ class m160208_093809_intent_analytics extends Migration
             '{{%intent_detectors}}',
             ['needs_traffic_sources_id'],
             '{{%traffic_sources}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
 
         //--------------------------------------------------------------------------------------------------------------
@@ -110,14 +116,18 @@ class m160208_093809_intent_analytics extends Migration
             '{{%intent_detectors_chain}}',
             ['intent_id'],
             '{{%intent}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
         $this->addForeignKey(
             'fk_intent_detectors_chain_intent_detectors1',
             '{{%intent_detectors_chain}}',
             ['intent_detectors_id'],
             '{{%intent_detectors}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
 
         //--------------------------------------------------------------------------------------------------------------
@@ -136,11 +146,11 @@ class m160208_093809_intent_analytics extends Migration
             'user_id' => $this->integer()->unsigned()->notNull()->defaultValue(0),
             'first_visit_at' => $this->dateTime(),
             'first_visit_referrer' => $this->string(500)->defaultValue(''),
-            'first_visit_visited_page_id' => $this->integer()->notNull()->defaultValue(0),
-            'first_traffic_sources_id' => $this->integer(),
+            'first_visit_visited_page_id' => $this->integer()->defaultExpression('NULL'),
+            'first_traffic_sources_id' => $this->integer()->defaultExpression('NULL'),
             'last_activity_at' => $this->dateTime(),
-            'last_activity_visited_page_id' => $this->integer()->notNull()->defaultValue(0),
-            'last_traffic_sources_id' => $this->integer(),
+            'last_activity_visited_page_id' => $this->integer()->defaultExpression('NULL'),
+            'last_traffic_sources_id' => $this->integer()->defaultExpression('NULL'),
             'geo_country_id' => $this->integer()->unsigned()->notNull()->defaultValue(0),
             'geo_region_id' => $this->integer()->unsigned()->notNull()->defaultValue(0),
             'geo_city_id' => $this->integer()->unsigned()->notNull()->defaultValue(0),
@@ -161,28 +171,36 @@ class m160208_093809_intent_analytics extends Migration
             '{{%visitor}}',
             ['first_visit_visited_page_id'],
             '{{%visited_page}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
         $this->addForeignKey(
             'fk_Visitor_VisitedPage_last',
             '{{%visitor}}',
             ['last_activity_visited_page_id'],
             '{{%visited_page}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
         $this->addForeignKey(
             'fk_visitor_traffic_sources1',
             '{{%visitor}}',
             ['first_traffic_sources_id'],
             '{{%traffic_sources}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
         $this->addForeignKey(
             'fk_visitor_traffic_sources2',
             '{{%visitor}}',
             ['last_traffic_sources_id'],
             '{{%traffic_sources}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
 
         //--------------------------------------------------------------------------------------------------------------
@@ -210,28 +228,36 @@ class m160208_093809_intent_analytics extends Migration
             '{{%visitor_visit}}',
             ['visitor_id'],
             '{{%visitor}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
         $this->addForeignKey(
             'fk_visitor_visit_visited_page1',
             '{{%visitor_visit}}',
             ['first_visited_page_id'],
             '{{%visited_page}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
         $this->addForeignKey(
             'fk_visitor_visit_visited_page2',
             '{{%visitor_visit}}',
             ['last_visited_page_id'],
             '{{%visited_page}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
         $this->addForeignKey(
             'fk_visitor_visit_traffic_sources1',
             '{{%visitor_visit}}',
             ['traffic_sources_id'],
             '{{%traffic_sources}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
 
         //--------------------------------------------------------------------------------------------------------------
@@ -248,14 +274,18 @@ class m160208_093809_intent_analytics extends Migration
             '{{%visitor_visit_intents}}',
             ['visitor_visit_id'],
             '{{%visitor_visit}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
         $this->addForeignKey(
             'fk_visitor_visit_intents_visited_page1',
             '{{%visitor_visit_intents}}',
             ['detected_visited_page_id'],
             '{{%visited_page}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
 
         //--------------------------------------------------------------------------------------------------------------
@@ -273,21 +303,27 @@ class m160208_093809_intent_analytics extends Migration
             '{{%visitor_visit_goals}}',
             ['visitor_visit_id'],
             '{{%visitor_visit}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
         $this->addForeignKey(
             'fk_visitor_visit_goals_visited_page1',
             '{{%visitor_visit_goals}}',
             ['visited_page_id'],
             '{{%visited_page}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
         $this->addForeignKey(
             'fk_visitor_visit_goals_analytics_goal1',
             '{{%visitor_visit_goals}}',
             ['analytics_goal_id'],
             '{{%analytics_goal}}',
-            ['id']
+            ['id'],
+            'NO ACTION',
+            'NO ACTION'
         );
     }
 
