@@ -12,13 +12,13 @@ class m160208_093809_intent_analytics extends Migration
             : null;
 
         //--------------------------------------------------------------------------------------------------------------
-        $this->createTable('{{%_analytics_categories}}', [
+        $this->createTable('{{%analytics_categories}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(250)->defaultValue(''),
         ], $tableOptions);
 
         //--------------------------------------------------------------------------------------------------------------
-        $this->createTable('{{%_analytics_goal}}', [
+        $this->createTable('{{%analytics_goal}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(250)->defaultValue(''),
             'is_transactional' => $this->boolean()->notNull()->defaultValue(0),
@@ -34,14 +34,14 @@ class m160208_093809_intent_analytics extends Migration
 
         $this->addForeignKey(
             'fk_analytics_goal_analytics_categories1',
-            '{{%_analytics_goal}}',
+            '{{%analytics_goal}}',
             ['analytics_categories_id'],
-            '{{%_analytics_categories}}',
+            '{{%analytics_categories}}',
             ['id']
         );
 
         //--------------------------------------------------------------------------------------------------------------
-        $this->createTable('{{%_self_reporting_block}}', [
+        $this->createTable('{{%self_reporting_block}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(250)->defaultValue(''),
             'analytics_goal_id' => $this->integer()->notNull(),
@@ -55,21 +55,21 @@ class m160208_093809_intent_analytics extends Migration
 
         $this->addForeignKey(
             'fk_self_reporting_block_analytics_goal1',
-            '{{%_self_reporting_block}}',
+            '{{%self_reporting_block}}',
             ['analytics_goal_id'],
-            '{{%_analytics_goal}}',
+            '{{%analytics_goal}}',
             ['id']
         );
 
         //--------------------------------------------------------------------------------------------------------------
-        $this->createTable('{{%_intent}}', [
+        $this->createTable('{{%intent}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(250)->defaultValue(''),
             'timeout' => $this->integer()->unsigned()->notNull()->defaultValue(0),
         ], $tableOptions);
 
         //--------------------------------------------------------------------------------------------------------------
-        $this->createTable('{{%_traffic_sources}}', [
+        $this->createTable('{{%traffic_sources}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(250)->defaultValue(''),
             'class_name' => $this->string(250)->defaultValue(''),
@@ -77,7 +77,7 @@ class m160208_093809_intent_analytics extends Migration
         ], $tableOptions);
 
         //--------------------------------------------------------------------------------------------------------------
-        $this->createTable('{{%_intent_detectors}}', [
+        $this->createTable('{{%intent_detectors}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(250)->defaultValue('')->notNull(),
             'class_name' => $this->string(250)->defaultValue('')->notNull(),
@@ -87,14 +87,14 @@ class m160208_093809_intent_analytics extends Migration
 
         $this->addForeignKey(
             'fk_intent_detectors_traffic_sources2',
-            '{{%_intent_detectors}}',
+            '{{%intent_detectors}}',
             ['needs_traffic_sources_id'],
-            '{{%_traffic_sources}}',
+            '{{%traffic_sources}}',
             ['id']
         );
 
         //--------------------------------------------------------------------------------------------------------------
-        $this->createTable('{{%_intent_detectors_chain}}', [
+        $this->createTable('{{%intent_detectors_chain}}', [
             'intent_id' => $this->integer()->notNull(),
             'intent_detectors_id' => $this->integer()->notNull(),
             'sort_order' => $this->integer(),
@@ -103,35 +103,35 @@ class m160208_093809_intent_analytics extends Migration
             'params' => $this->text(),
             'needs_traffic_sources_id' => $this->integer()->notNull()->defaultValue(0),
         ], $tableOptions);
-        $this->addPrimaryKey('PRIMARY KEY', '{{%_intent_detectors_chain}}', ['intent_id', 'intent_detectors_id']);
+        $this->addPrimaryKey('PRIMARY KEY', '{{%intent_detectors_chain}}', ['intent_id', 'intent_detectors_id']);
 
         $this->addForeignKey(
             'fk_intent_detectors_chain_intent1',
-            '{{%_intent_detectors_chain}}',
+            '{{%intent_detectors_chain}}',
             ['intent_id'],
-            '{{%_intent}}',
+            '{{%intent}}',
             ['id']
         );
         $this->addForeignKey(
             'fk_intent_detectors_chain_intent_detectors1',
-            '{{%_intent_detectors_chain}}',
+            '{{%intent_detectors_chain}}',
             ['intent_detectors_id'],
-            '{{%_intent_detectors}}',
+            '{{%intent_detectors}}',
             ['id']
         );
 
         //--------------------------------------------------------------------------------------------------------------
-        $this->createTable('{{%_visited_page}}', [
+        $this->createTable('{{%visited_page}}', [
             'id' => $this->primaryKey(),
             'route' => $this->string(250)->defaultValue(''),
             'params' => $this->text(),
             'url' => $this->string(500)->defaultValue(''),
         ], $tableOptions);
-        $this->createIndex('byRoute', '{{%_visited_page}}', ['route']);
-        $this->createIndex('byUrl', '{{%_visited_page}}', ['url']);
+        $this->createIndex('byRoute', '{{%visited_page}}', ['route']);
+        $this->createIndex('byUrl', '{{%visited_page}}', ['url']);
 
         //--------------------------------------------------------------------------------------------------------------
-        $this->createTable('{{%_visitor}}', [
+        $this->createTable('{{%visitor}}', [
             'id' => $this->primaryKey(),
             'user_id' => $this->integer()->unsigned()->notNull()->defaultValue(0),
             'first_visit_at' => $this->dateTime(),
@@ -151,42 +151,42 @@ class m160208_093809_intent_analytics extends Migration
             'overall_actions_value' => $this->float(),
             'overall_goals_value' => $this->float(),
         ], $tableOptions);
-        $this->createIndex('byUser', '{{%_visitor}}', ['user_id']);
-        $this->createIndex('byFirstVisit', '{{%_visitor}}', ['first_visit_at']);
-        $this->createIndex('byLastVisit', '{{%_visitor}}', ['last_activity_at']);
-        $this->createIndex('byFirstUrls', '{{%_visitor}}', ['first_visit_referrer']);
+        $this->createIndex('byUser', '{{%visitor}}', ['user_id']);
+        $this->createIndex('byFirstVisit', '{{%visitor}}', ['first_visit_at']);
+        $this->createIndex('byLastVisit', '{{%visitor}}', ['last_activity_at']);
+        $this->createIndex('byFirstUrls', '{{%visitor}}', ['first_visit_referrer']);
 
         $this->addForeignKey(
             'fk_Visitor_VisitedPage_first',
-            '{{%_visitor}}',
+            '{{%visitor}}',
             ['first_visit_visited_page_id'],
-            '{{%_visited_page}}',
+            '{{%visited_page}}',
             ['id']
         );
         $this->addForeignKey(
             'fk_Visitor_VisitedPage_last',
-            '{{%_visitor}}',
+            '{{%visitor}}',
             ['last_activity_visited_page_id'],
-            '{{%_visited_page}}',
+            '{{%visited_page}}',
             ['id']
         );
         $this->addForeignKey(
             'fk_visitor_traffic_sources1',
-            '{{%_visitor}}',
+            '{{%visitor}}',
             ['first_traffic_sources_id'],
-            '{{%_traffic_sources}}',
+            '{{%traffic_sources}}',
             ['id']
         );
         $this->addForeignKey(
             'fk_visitor_traffic_sources2',
-            '{{%_visitor}}',
+            '{{%visitor}}',
             ['last_traffic_sources_id'],
-            '{{%_traffic_sources}}',
+            '{{%traffic_sources}}',
             ['id']
         );
 
         //--------------------------------------------------------------------------------------------------------------
-        $this->createTable('{{%_visitor_visit}}', [
+        $this->createTable('{{%visitor_visit}}', [
             'id' => $this->primaryKey(),
             'visitor_id' => $this->integer()->notNull()->defaultValue(0),
             'started_at' => $this->dateTime()->notNull(),
@@ -203,90 +203,90 @@ class m160208_093809_intent_analytics extends Migration
             'goals_value' => $this->float(),
             'traffic_sources_id' => $this->integer()->notNull()->defaultValue(0),
         ], $tableOptions);
-        $this->createIndex('byTrafficSrc', '{{%_visitor_visit}}', ['traffic_sources_id']);
+        $this->createIndex('byTrafficSrc', '{{%visitor_visit}}', ['traffic_sources_id']);
 
         $this->addForeignKey(
             'fk_VisitorSession_Visitor1',
-            '{{%_visitor_visit}}',
+            '{{%visitor_visit}}',
             ['visitor_id'],
-            '{{%_visitor}}',
+            '{{%visitor}}',
             ['id']
         );
         $this->addForeignKey(
             'fk_visitor_visit_visited_page1',
-            '{{%_visitor_visit}}',
+            '{{%visitor_visit}}',
             ['first_visited_page_id'],
-            '{{%_visited_page}}',
+            '{{%visited_page}}',
             ['id']
         );
         $this->addForeignKey(
             'fk_visitor_visit_visited_page2',
-            '{{%_visitor_visit}}',
+            '{{%visitor_visit}}',
             ['last_visited_page_id'],
-            '{{%_visited_page}}',
+            '{{%visited_page}}',
             ['id']
         );
         $this->addForeignKey(
             'fk_visitor_visit_traffic_sources1',
-            '{{%_visitor_visit}}',
+            '{{%visitor_visit}}',
             ['traffic_sources_id'],
-            '{{%_traffic_sources}}',
+            '{{%traffic_sources}}',
             ['id']
         );
 
         //--------------------------------------------------------------------------------------------------------------
-        $this->createTable('{{%_visitor_visit_intents}}', [
+        $this->createTable('{{%visitor_visit_intents}}', [
             'visitor_visit_id' => $this->integer()->notNull(),
             'intent_id' => $this->integer()->unsigned()->notNull(),
             'detected_at' => $this->dateTime()->notNull(),
             'detected_visited_page_id' => $this->integer()->notNull(),
         ], $tableOptions);
-        $this->addPrimaryKey('PRIMARY KEY', '{{%_visitor_visit_intents}}', ['visitor_visit_id', 'intent_id']);
+        $this->addPrimaryKey('PRIMARY KEY', '{{%visitor_visit_intents}}', ['visitor_visit_id', 'intent_id']);
 
         $this->addForeignKey(
             'fk_visitor_visit_intents_visitor_visit1',
-            '{{%_visitor_visit_intents}}',
+            '{{%visitor_visit_intents}}',
             ['visitor_visit_id'],
-            '{{%_visitor_visit}}',
+            '{{%visitor_visit}}',
             ['id']
         );
         $this->addForeignKey(
             'fk_visitor_visit_intents_visited_page1',
-            '{{%_visitor_visit_intents}}',
+            '{{%visitor_visit_intents}}',
             ['detected_visited_page_id'],
-            '{{%_visited_page}}',
+            '{{%visited_page}}',
             ['id']
         );
 
         //--------------------------------------------------------------------------------------------------------------
-        $this->createTable('{{%_visitor_visit_goals}}', [
+        $this->createTable('{{%visitor_visit_goals}}', [
             'visitor_visit_id' => $this->integer()->notNull(),
             'analytics_goal_id' => $this->integer()->notNull(),
             'goal_at' => $this->dateTime(),
             'visited_page_id' => $this->integer()->notNull(),
             'goal_value' => $this->float()->unsigned(),
         ], $tableOptions);
-        $this->addPrimaryKey('PRIMARY KEY', '{{%_visitor_visit_goals}}', ['visitor_visit_id', 'analytics_goal_id']);
+        $this->addPrimaryKey('PRIMARY KEY', '{{%visitor_visit_goals}}', ['visitor_visit_id', 'analytics_goal_id']);
 
         $this->addForeignKey(
             'fk_visitor_visit_goals_visitor_visit1',
-            '{{%_visitor_visit_goals}}',
+            '{{%visitor_visit_goals}}',
             ['visitor_visit_id'],
-            '{{%_visitor_visit}}',
+            '{{%visitor_visit}}',
             ['id']
         );
         $this->addForeignKey(
             'fk_visitor_visit_goals_visited_page1',
-            '{{%_visitor_visit_goals}}',
+            '{{%visitor_visit_goals}}',
             ['visited_page_id'],
-            '{{%_visited_page}}',
+            '{{%visited_page}}',
             ['id']
         );
         $this->addForeignKey(
             'fk_visitor_visit_goals_analytics_goal1',
-            '{{%_visitor_visit_goals}}',
+            '{{%visitor_visit_goals}}',
             ['analytics_goal_id'],
-            '{{%_analytics_goal}}',
+            '{{%analytics_goal}}',
             ['id']
         );
     }
@@ -294,17 +294,17 @@ class m160208_093809_intent_analytics extends Migration
     public function down()
     {
 
-        $this->dropTable('{{%_visitor_visit_goals}}');
-        $this->dropTable('{{%_visitor_visit_intents}}');
-        $this->dropTable('{{%_visitor_visit}}');
-        $this->dropTable('{{%_visitor}}');
-        $this->dropTable('{{%_visited_page}}');
-        $this->dropTable('{{%_intent_detectors_chain}}');
-        $this->dropTable('{{%_intent_detectors}}');
-        $this->dropTable('{{%_traffic_sources}}');
-        $this->dropTable('{{%_intent}}');
-        $this->dropTable('{{%_self_reporting_block}}');
-        $this->dropTable('{{%_analytics_goal}}');
-        $this->dropTable('{{%_analytics_categories}}');
+        $this->dropTable('{{%visitor_visit_goals}}');
+        $this->dropTable('{{%visitor_visit_intents}}');
+        $this->dropTable('{{%visitor_visit}}');
+        $this->dropTable('{{%visitor}}');
+        $this->dropTable('{{%visited_page}}');
+        $this->dropTable('{{%intent_detectors_chain}}');
+        $this->dropTable('{{%intent_detectors}}');
+        $this->dropTable('{{%traffic_sources}}');
+        $this->dropTable('{{%intent}}');
+        $this->dropTable('{{%self_reporting_block}}');
+        $this->dropTable('{{%analytics_goal}}');
+        $this->dropTable('{{%analytics_categories}}');
     }
 }
