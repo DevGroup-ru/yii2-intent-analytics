@@ -37,4 +37,32 @@ class IntentAnalyticsModule extends Module
      * @var string
      */
     public $yaCounterObject = 'yaCounter21370474';
+
+    /**
+     * Detect first visit source
+     *
+     * @var bool
+     */
+    public $detectFirstVisitSource = true;
+
+    /**
+     * Detect all visits source
+     *
+     * @var bool
+     */
+    public $detectAllVisitsSources = true;
+
+    /**
+     * Store last activity information
+     *
+     * @var bool
+     */
+    public $storeLastActivity = true;
+
+    /**
+     * Store information about visits of all pages
+     *
+     * @var bool
+     */
+    public $storeVisitedPages = true;
 }
