@@ -1,3 +1,4 @@
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `analytics_categories`;
 CREATE TABLE IF NOT EXISTS `analytics_categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -28,6 +29,15 @@ CREATE TABLE IF NOT EXISTS `intent` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(250) COLLATE utf8_unicode_ci DEFAULT '',
   `timeout` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+DROP TABLE IF EXISTS `traffic_sources`;
+CREATE TABLE IF NOT EXISTS `traffic_sources` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) COLLATE utf8_unicode_ci DEFAULT '',
+  `class_name` varchar(250) COLLATE utf8_unicode_ci DEFAULT '',
+  `params` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -72,15 +82,6 @@ CREATE TABLE IF NOT EXISTS `self_reporting_block` (
   PRIMARY KEY (`id`),
   KEY `fk_self_reporting_block_analytics_goal1` (`analytics_goal_id`),
   CONSTRAINT `fk_self_reporting_block_analytics_goal1` FOREIGN KEY (`analytics_goal_id`) REFERENCES `analytics_goal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-DROP TABLE IF EXISTS `traffic_sources`;
-CREATE TABLE IF NOT EXISTS `traffic_sources` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(250) COLLATE utf8_unicode_ci DEFAULT '',
-  `class_name` varchar(250) COLLATE utf8_unicode_ci DEFAULT '',
-  `params` text COLLATE utf8_unicode_ci,
-  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `visited_page`;
@@ -183,3 +184,4 @@ CREATE TABLE IF NOT EXISTS `visitor_visit_intents` (
   CONSTRAINT `fk_visitor_visit_intents_visited_page1` FOREIGN KEY (`detected_visited_page_id`) REFERENCES `visited_page` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_visitor_visit_intents_visitor_visit1` FOREIGN KEY (`visitor_visit_id`) REFERENCES `visitor_visit` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
