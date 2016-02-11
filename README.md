@@ -14,3 +14,29 @@ composer require "devgroup/yii2-intent-analytics:*"
 ```bash
 ./yii migrate --migrationPath=vendor/devgroup/yii2-intent-analytics/src/migrations
 ```
+
+### Configure your application
+
+Add module:
+
+```php
+    'modules' => [
+        ...
+        'analytics' => [
+            'class' => \DevGroup\Analytics\IntentAnalyticsModule::className(),
+//            'detectFirstVisitSource' => true,
+//            'detectAllVisitsSources' => true,
+//            'storeLastActivity' => true,
+//            'storeVisitedPages' => true,
+//            'visitorCookieName' => 'visitor_id',
+//            'visitorCookieTime' => 61516800,
+//            'visitorCookieExpireTime' => 3758400,
+//            'i18category' => 'IntentAnalyticsModule',
+//            'modelMap' => [
+//                'Visitor' => [
+//                    'class' => 'DevGroup\Analytics\models\Visitor',
+//                ],
+//            ],
+        ],
+        ...
+```
