@@ -1,7 +1,12 @@
 class CounterInterface {
+    /**
+     * @param locator
+     * @param jsObject
+     * @param options
+     */
     constructor(locator, jsObject, options) {
         this.locator = locator;
-        this.jsObject = jsObject;
+        this.jsObject = this.resolveJsObject(jsObject);
         this.rawOptions = options;
         this.init(options);
     }
@@ -14,16 +19,21 @@ class CounterInterface {
     }
 
     /**
-     * Return type of counter as string
-     * @returns {*}
+     * @param name
+     * @return {{}}
      */
-    get type() {
-        return '';
+    resolveJsObject(name) {
+        return {};
+    }
+    
+    /**
+     * Send event
+     * @param event
+     * @param data
+     * @param params
+     */
+    sendEvent(event, data, params) {
     }
 }
 
-const TYPE_GA = 'Google Analytics';
-const TYPE_YA = 'Yandex.Metrika';
-const TYPE_PI = 'Piwik';
-
-export {CounterInterface, TYPE_GA, TYPE_YA, TYPE_PI};
+export {CounterInterface};

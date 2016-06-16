@@ -1,14 +1,28 @@
-import {CounterInterface, TYPE_YA} from './CounterInterface';
+import {CounterInterface} from './CounterInterface';
 
 class CounterYandexMetrika extends CounterInterface {
+    /**
+     * @param options
+     */
     init(options) {
         super.init(options);
     }
 
     /**
+     * @param name
+     * @return {{}}
      */
-    get type() {
-        return TYPE_YA;
+    resolveJsObject(name) {
+        return window[`yaCounter${name}`] || super.resolveJsObject(name);
+    }
+
+    /**
+     * @param event
+     * @param data
+     * @param params
+     */
+    sendEvent(event, data, params) {
+        // this.jsObject.reachGoal(event, params || {});
     }
 }
 

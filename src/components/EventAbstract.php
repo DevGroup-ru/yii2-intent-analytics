@@ -3,7 +3,6 @@ namespace DevGroup\Analytics\components;
 
 use DevGroup\Analytics\models\Event;
 use DevGroup\Analytics\models\EventType;
-use yii\helpers\Json;
 
 abstract class EventAbstract
 {
@@ -20,7 +19,7 @@ abstract class EventAbstract
             [
                 'jsModule' => $type->js_module,
                 'type' => $type->type,
-                'options' => Json::decode($model->options_json),
+                'options' => $model->getOptions(),
             ],
             (true === is_array($array)) ? $array : []
         );

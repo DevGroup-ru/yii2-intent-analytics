@@ -2,6 +2,8 @@
 namespace DevGroup\Analytics\models;
 
 use Yii;
+use yii\base\InvalidParamException;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "{{%intent_event}}".
@@ -67,6 +69,36 @@ class Event extends \yii\db\ActiveRecord
     public function getType()
     {
         return $this->hasOne(EventType::class, ['id' => 'type_id']);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTypeOfEvent()
+    {
+        return $this->type->type;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getClass()
+    {
+        return $this->type->class;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        try {
+            $result = Json::decode($this->options_json);
+        } catch (InvalidParamException $e) {
+            $result = [];
+        }
+
+        return $result;
     }
 
     /**

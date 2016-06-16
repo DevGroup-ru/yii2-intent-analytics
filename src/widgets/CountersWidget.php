@@ -15,23 +15,15 @@ class CountersWidget extends Widget
     /**
      * @inheritdoc
      */
-    public function init()
-    {
-        parent::init();
-
-        AssetBundle::register($this->view);
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function run()
     {
         parent::run();
 
+        AssetBundle::register($this->view);
+
         $counters = [];
         /** @var Counter $model */
-        foreach (Counter::find()->all() as $model) {
+        foreach (Counter::getActiveCounters() as $model) {
             /** @var CounterAbstract $class */
             $class = $model->class;
             if (false === is_subclass_of($class, CounterAbstract::class)) {
@@ -42,16 +34,15 @@ class CountersWidget extends Widget
         
         $counters = Json::encode($counters);
         $this->view->registerJs(
-            "_iaq.addCounters(${counters});",
+            "UnionAnalytics.getInstance().addCounters(${counters});",
             View::POS_END
         );
 
         $events = [];
         /** @var Event $model */
         foreach (Event::getActiveEvents() as $model) {
-            $type = $model->type;
             /** @var EventAbstract $class */
-            $class = $type->class;
+            $class = $model->class;
             if (false === is_subclass_of($class, EventAbstract::class)) {
                 continue ;
             }
@@ -59,7 +50,7 @@ class CountersWidget extends Widget
         }
         $events = Json::encode($events);
         $this->view->registerJs(
-            "_iaq.addEvents(${events});",
+            "UnionAnalytics.getInstance().addEvents(${events});",
             View::POS_END
         );
     }
