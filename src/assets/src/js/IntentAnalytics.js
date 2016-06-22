@@ -25,14 +25,11 @@ class IntentAnalytics {
   }
 
   static createCounter(counter, counterType) {
-    switch (counterType) {
-    case 'GoogleAnalytics':
-      return new GoogleAnalytics(counter.javascriptObjectName, counter);
-    case 'YandexMetrika':
-      return new YandexMetrika(counter.javascriptObjectName, counter);
-    default:
-      return null;
-    }
+      if (typeof [counterType] === 'function') {
+          return new [counterType](counter.javascriptObjectName, counter);
+      } else {
+          return null;
+      }
   }
 
   addToQueue(counterType, functionName, argument) {
@@ -41,7 +38,7 @@ class IntentAnalytics {
     }
     this.actionQueue[counterType].push({
       'functionName': functionName,
-      'argument': argument,
+      'argument': argument
     });
   }
 

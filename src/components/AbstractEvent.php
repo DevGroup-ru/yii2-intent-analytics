@@ -4,7 +4,7 @@ namespace DevGroup\Analytics\components;
 use DevGroup\Analytics\models\Event;
 use DevGroup\Analytics\models\EventType;
 
-abstract class EventAbstract
+abstract class AbstractEvent
 {
     /**
      * @param Event $model
@@ -24,10 +24,13 @@ abstract class EventAbstract
             (true === is_array($array)) ? $array : []
         );
     }
-    
+
     /**
      * @param Event $model
      * @return array
      */
-    abstract protected static function initEvent(Event $model);
+    protected static function initEvent(Event $model)
+    {
+
+    }
 }

@@ -22,7 +22,8 @@ class CounterYandexMetrika extends CounterInterface {
      * @param params
      */
     sendEvent(event, data, params) {
-        // this.jsObject.reachGoal(event, params || {});
+        console.log(event);
+        //this.jsObject.reachGoal(event, params || {});
     }
 }
 

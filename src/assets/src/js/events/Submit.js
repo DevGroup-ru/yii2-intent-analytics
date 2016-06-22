@@ -1,9 +1,9 @@
 import {EventInterface} from './EventInterface';
 
-class Click extends EventInterface {
+class Submit extends EventInterface {
 
     get eventName () {
-        return 'click';
+        return 'submit';
     }
 
     /**
@@ -17,4 +17,4 @@ class Click extends EventInterface {
     }
 }
 
-export {Click};
+export {Submit};

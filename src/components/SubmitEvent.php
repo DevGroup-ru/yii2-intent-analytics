@@ -5,11 +5,11 @@ namespace DevGroup\Analytics\components;
 use DevGroup\Analytics\models\Event;
 
 /**
- * Class ClickEvent
+ * Class SubmitEvent
  *
  * @package DevGroup\Analytics\components
  */
-class ClickEvent extends AbstractEvent
+class SubmitEvent extends AbstractEvent
 {
     /**
      * @inheritdoc
