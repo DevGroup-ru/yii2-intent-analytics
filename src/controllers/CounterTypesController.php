@@ -60,6 +60,7 @@ class CounterTypesController extends Controller
                 ));
             }
         }
+        //TODO remove
         print_r(Yii::$app->session->getAllFlashes());
         return $this->render(
             'edit',
@@ -85,13 +86,12 @@ class CounterTypesController extends Controller
         $class = $type->class;
         if (false === class_exists($class) || (false === is_subclass_of($class, AbstractCounter::class))) {
             throw new InvalidParamException(
-                Yii::t('app', "Unknown counter type class '{class}'", ['class' => $type->class])
+                Yii::t('app', "Unknown counter type class '{class}'", ['class' => $class])
 
             );
         }
         /** @var AbstractCounter $class */
         $class::authorizeCounter($type, $params);
-        //TODO make it work
-        //$this->redirect(['/analytics/counter-types/edit', 'id' => $type->id]);
+        $this->redirect(['/analytics/counter-types/edit', 'id' => $type->id]);
     }
 }

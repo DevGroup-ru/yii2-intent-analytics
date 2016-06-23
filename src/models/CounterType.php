@@ -1,7 +1,9 @@
 <?php
 namespace DevGroup\Analytics\models;
 
+use DevGroup\Analytics\components\AbstractCounter;
 use Yii;
+use yii\base\InvalidParamException;
 use yii\data\ActiveDataProvider;
 
 /**
@@ -118,6 +120,28 @@ class CounterType extends \yii\db\ActiveRecord
             }
         }
         return $type;
+    }
+
+    /**
+     * For now it is very naive
+     * Just because all kind of APIs has the different token lifetimes and not every API library provides method
+     * to get token expiration date
+     *
+     * TODO improve checks
+     *
+     * @return bool
+     */
+    public function isAuthorized()
+    {
+        /** @var AbstractCounter $class */
+        $class = $this->class;
+        if (false === class_exists($class) || (false === is_subclass_of($class, AbstractCounter::class))) {
+            throw new InvalidParamException(
+                Yii::t('app', "Unknown counter type class '{class}'", ['class' => $class])
+
+            );
+        }
+        return $class::isAuthorized($this);
     }
 
     /**

@@ -3,10 +3,8 @@ namespace DevGroup\Analytics\components;
 
 use DevGroup\Analytics\models\Counter;
 use DevGroup\Analytics\models\CounterType;
-use Google\Auth\HttpHandler\HttpHandlerFactory;
 use Google_Service_Analytics;
 use Google_Client;
-use yii\helpers\Url;
 use Yii;
 
 class GoogleAnalyticsCounter extends AbstractCounter
@@ -26,11 +24,37 @@ class GoogleAnalyticsCounter extends AbstractCounter
      *
      * @inheritdoc
      */
-    public static function authorizeCounter($counter, $config)
+    public static function authorizeCounter(CounterType $counter, $config)
     {
         $answer = isset($config['state']) && isset($config['code']);
+        $client = self::getClient($counter->id);
+        self::setCredentials($counter, $client);
+        if (true === self::isAuthorized($counter, $client)) {
+            Yii::$app->session->setFlash('success', Yii::t('app',
+                Yii::t('app', "Access token is alive.")
+            ));
+            return true;
+        }
+        if (false === $answer) {
+            $auth_url = $client->createAuthUrl();
+            Yii::$app->getResponse()->redirect($auth_url)->send();
+            return;
+        } else {
+            $code = $config['code'];
+            try {
+                $creds = $client->fetchAccessTokenWithAuthCode($code);
+            } catch (\InvalidArgumentException $ex) {
+                Yii::$app->session->setFlash('error', $ex->getMessage());
+                return false;
+            }
+            return self::handleCredentials($counter, $creds);
+        }
+
+    }
+
+    private static function getClient($state)
+    {
         $client = new Google_Client();
-        $client->setState($counter->id);
         //TODO do not forget to change
         $client->setRedirectUri('http://localhost:9080');
         //$client->setRedirectUri(Url::to(['/analytics/counter-types/auth'], true));
@@ -38,46 +62,30 @@ class GoogleAnalyticsCounter extends AbstractCounter
         $client->setApplicationName(Yii::$app->id);
         $client->addScope(Google_Service_Analytics::ANALYTICS);
         $client->addScope(Google_Service_Analytics::ANALYTICS_EDIT);
-        //$client->setIncludeGrantedScopes(true);
-        if (false === empty($counter->access_token)) {
-            $client->setAccessToken($counter->access_token);
-            if (true === $client->isAccessTokenExpired()) {
-                $creds = $client->fetchAccessTokenWithRefreshToken();
-                return self::handleCredentials($counter, $creds);
-            }
-            return true;
-        } else {
-            $account = json_decode($counter->credentials_json, true);
-            if (null === $account || false === isset($account['web'])) {
-                Yii::$app->session->setFlash('error', Yii::t('app',
-                    Yii::t('app', "Credentials are empty! Maybe you first need to register application in the Google development console.")
-                ));
-                return false;
-            }
-            $client->setClientId($account['web']['client_id']);
-            $client->setClientSecret($account['web']['client_secret']);
-            if (isset($account['web']['redirect_uris'])) {
-                $client->setRedirectUri($account['web']['redirect_uris'][0]);
-            }
-            if (false === $answer) {
-                $auth_url = $client->createAuthUrl();
-                return Yii::$app->response->redirect($auth_url);
-            } else {
-                $code = $config['code'];
-                try {
-                    $creds = $client->fetchAccessTokenWithAuthCode($code);
-                } catch (\InvalidArgumentException $ex) {
-                    Yii::$app->session->setFlash('error', $ex->getMessage());
-                    return false;
-                }
-                return self::handleCredentials($counter, $creds);
-            }
-        }
+        $client->setIncludeGrantedScopes(true);
+        $client->setState($state);
+        return $client;
     }
 
-    private function getClient()
+    /**
+     * @param CounterType $counter
+     * @param Google_Client $client
+     * @return bool
+     */
+    protected static function setCredentials($counter, $client)
     {
-
+        $account = json_decode($counter->credentials_json, true);
+        if (null === $account || false === isset($account['web'])) {
+            Yii::$app->session->setFlash('error', Yii::t('app',
+                Yii::t('app', "Credentials are empty! Maybe you first need to register application in the Google development console.")
+            ));
+            return false;
+        }
+        $client->setClientId($account['web']['client_id']);
+        $client->setClientSecret($account['web']['client_secret']);
+        if (isset($account['web']['redirect_uris'])) {
+            $client->setRedirectUri($account['web']['redirect_uris'][0]);
+        }
     }
 
     /**
@@ -110,13 +118,45 @@ class GoogleAnalyticsCounter extends AbstractCounter
                 ));
             }
         } else {
-            self::handleError($creds);
+            return self::handleError($creds);
         }
         return false;
     }
 
     protected static function handleError($creds)
     {
+        Yii::$app->session->setFlash('error', implode(': ', $creds));
+        return false;
         //TODO
     }
+
+    /**
+     * @param Counter $counter
+     * @return bool
+     */
+    public static function getCounterHtml(Counter $counter)
+    {
+        new Google_Service_Analytics([]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function isAuthorized(CounterType $counter, $client = null)
+    {
+        if (false === empty($counter->access_token)) {
+            if (null === $client) {
+                $client = self::getClient($counter->id);
+            }
+            $client->setAccessToken($counter->access_token);
+            if (true === $client->isAccessTokenExpired()) {
+                $creds = $client->fetchAccessTokenWithRefreshToken();
+                return self::handleCredentials($counter, $creds);
+            }
+            return true;
+        }
+        return false;
+    }
+
+
 }

@@ -15,6 +15,7 @@ use yii\helpers\Json;
  * @property string $js_object
  * @property string $options_json
  * @property string $counter_html
+ * @property string $counter_id
  * @property integer $active
  *
  * @property CounterType $type
@@ -45,7 +46,7 @@ class Counter extends \yii\db\ActiveRecord
         return [
             [['options_json', 'counter_html'], 'string'],
             [['title', 'js_object', 'type_id',], 'required'],
-            [['title', 'js_object',], 'string', 'max' => 255],
+            [['title', 'js_object', 'counter_id'], 'string', 'max' => 255],
             [['title', 'js_object',], 'unique'],
             [['type_id', 'active',], 'integer'],
         ];
@@ -63,6 +64,7 @@ class Counter extends \yii\db\ActiveRecord
             'js_object' => Yii::t('app', 'Js Object'),
             'options_json' => Yii::t('app', 'Options Json'),
             'counter_html' => Yii::t('app', 'Counter HTML'),
+            'counter_id' => Yii::t('app', 'Counter ID'),
             'active' => Yii::t('app', 'Active'),
         ];
     }
@@ -140,6 +142,7 @@ class Counter extends \yii\db\ActiveRecord
             'desc' => [$counterTypeTable . '.title' => SORT_DESC],
         ];
         $query->andFilterWhere(['like', 'title', $this->title]);
+        $query->andFilterWhere(['like', 'counter_id', $this->counter_id]);
         $query->andFilterWhere(['active' => $this->active]);
         $query->andFilterWhere([$counterTypeTable . '.id' => $this->type_id]);
         return $dataProvider;

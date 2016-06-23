@@ -4,7 +4,12 @@ namespace DevGroup\Analytics\components;
 use DevGroup\Analytics\models\Counter;
 use DevGroup\Analytics\models\CounterType;
 
-abstract class AbstractCounter
+/**
+ * Class AbstractCounter
+ *
+ * @package DevGroup\Analytics\components
+ */
+abstract class AbstractCounter implements CounterInterface
 {
     /**
      * @param Counter $model
@@ -31,17 +36,6 @@ abstract class AbstractCounter
      * @return array
      */
     protected static function initCounter(Counter $model)
-    {
-
-    }
-
-    /**
-     * Gets API access_token
-     *
-     * @param CounterType $counter
-     * @param array $config
-     */
-    public static function authorizeCounter(CounterType $counter, $config)
     {
 
     }
