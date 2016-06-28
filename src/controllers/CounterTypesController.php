@@ -53,7 +53,7 @@ class CounterTypesController extends Controller
                 Yii::$app->session->setFlash('success', Yii::t('app',
                     '{model} successfully saved', ['model' => Yii::t('app', 'Counter Type')]
                 ));
-                return $this->refresh();
+                return $this->redirect(['/analytics/counter-types/edit', 'id' => $type->id]);
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app',
                     'There was an error while saving {model}', ['model' => Yii::t('app', 'Counter Type')]

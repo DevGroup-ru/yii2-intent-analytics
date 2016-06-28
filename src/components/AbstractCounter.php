@@ -23,6 +23,8 @@ abstract class AbstractCounter implements CounterInterface
         return array_replace_recursive(
             [
                 'id' => $model->id,
+                'title' => $model->title,
+                'counterId' => $model->counter_id,
                 'jsModule' => $type->js_module,
                 'jsObject' => $model->js_object,
                 'options' => $model->getOptions(),

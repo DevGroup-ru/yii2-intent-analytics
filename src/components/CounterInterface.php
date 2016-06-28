@@ -34,4 +34,6 @@ interface CounterInterface
      * @return bool
      */
     static function isAuthorized(CounterType $counter, $client = null);
+
+    static function getGoals(Counter $counter);
 }

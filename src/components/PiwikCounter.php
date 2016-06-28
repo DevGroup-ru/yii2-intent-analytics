@@ -40,5 +40,9 @@ class PiwikCounter extends AbstractCounter
         // TODO: Implement isAuthorized() method.
     }
 
+    static function getGoals(Counter $counter)
+    {
+        // TODO: Implement getGoals() method.
+    }
 
 }

@@ -99,7 +99,11 @@ class Counter extends \yii\db\ActiveRecord
     public static function getActiveCounters()
     {
         if (null === static::$_activeCounters) {
-            static::$_activeCounters = static::find()->where(['active' => self::STATUS_ACTIVE])->all();
+            static::$_activeCounters = static::find()->where([
+                'and',
+                ['active' => self::STATUS_ACTIVE],
+                ['not', 'counter_html' => '']
+            ])->all();
         }
 
         return static::$_activeCounters;

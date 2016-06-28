@@ -78,7 +78,7 @@ class m160505_111247_counters_init extends Migration
             'type' => 'Google Analytics',
             'title' => 'Google Analytics',
             'class' => GoogleAnalyticsCounter::class,
-            'js_module' => 'CounterGoogleAnalytics',
+            'js_module' => 'GoogleAnalytics',
             'default_js_object' => 'ga',
             'default_options_json' => '{}',
         ]);
@@ -87,7 +87,7 @@ class m160505_111247_counters_init extends Migration
             'type' => 'Yandex.Metrika',
             'title' => 'Yandex.Metrika',
             'class' => YandexMetrikaCounter::class,
-            'js_module' => 'CounterYandexMetrika',
+            'js_module' => 'YandexMetrika',
             'default_js_object' => '_yaq',
             'default_options_json' => '{}',
         ]);
@@ -96,7 +96,7 @@ class m160505_111247_counters_init extends Migration
             'type' => 'Piwik',
             'title' => 'Piwik',
             'class' => PiwikCounter::class,
-            'js_module' => 'CounterPiwik',
+            'js_module' => 'Piwik',
             'default_js_object' => '_paq',
             'default_options_json' => '{}',
         ]);

@@ -1,14 +1,20 @@
 class CounterInterface {
+
     /**
-     * @param locator
-     * @param jsObject
-     * @param options
+     * Here we turn off no-unused-vars warning because this class is actually abstract.
+     * So there's a lot of unused vars and it is normal - we just want to describe the whole interface.
+     *
+     * eslint no-unused-vars: 0
+     *
+     * @param locator {IntentAnalytics}
+     * @param counter
      */
-    constructor(locator, jsObject, options) {
+    constructor(locator, counter) {
+        Object.assign(this, counter);
+        this.counterSet = false;
         this.locator = locator;
-        this.jsObject = this.resolveJsObject(jsObject);
-        this.rawOptions = options;
-        this.init(options);
+        this.init(counter.options);
+        this.resolveJsObject(counter.jsObject);
     }
 
     /**

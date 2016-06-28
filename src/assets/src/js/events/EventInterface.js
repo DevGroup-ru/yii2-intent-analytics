@@ -1,7 +1,7 @@
 class EventInterface {
 
     /**
-     * @param locator UnionAnalytics
+     * @param locator IntentAnalytics
      * @param options
      */
     constructor(locator, options) {

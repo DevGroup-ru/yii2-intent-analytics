@@ -50,7 +50,7 @@ class CountersController extends Controller
         if (false === empty($post)) {
             if (true === $counter->load($post) && true === $counter->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Counter successfully saved'));
-                return $this->refresh();
+                return $this->redirect(['/analytics/counters/edit', 'id' => $counter->id]);
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'There was an error while saving Counter'));
             }

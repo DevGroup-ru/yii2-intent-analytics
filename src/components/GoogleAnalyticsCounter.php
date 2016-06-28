@@ -52,6 +52,10 @@ class GoogleAnalyticsCounter extends AbstractCounter
 
     }
 
+    /**
+     * @param $state
+     * @return Google_Client
+     */
     private static function getClient($state)
     {
         $client = new Google_Client();
@@ -102,8 +106,9 @@ class GoogleAnalyticsCounter extends AbstractCounter
                     $creds['refresh_token'] = $current['refresh_token'];
                 } else {
                     Yii::$app->session->setFlash('error', Yii::t('app',
-                        'There in no "refresh_token" stored! Please, create new credentials and authorize again!'
+                        'There is no "refresh_token" stored! Please, create new credentials and authorize again!'
                     ));
+                    return false;
                 }
             }
             $counter->access_token = json_encode($creds);
@@ -136,7 +141,28 @@ class GoogleAnalyticsCounter extends AbstractCounter
      */
     public static function getCounterHtml(Counter $counter)
     {
-        new Google_Service_Analytics([]);
+        if (true === empty($counter->counter_id)) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Please, specify counter id!'));
+            return false;
+        }
+        $tpl = <<<TPL
+<!-- Google Analytics -->
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', '%s', 'auto', '%s');
+    ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+<!-- End Google Analytics -->
+TPL;
+        $counter->counter_html = sprintf($tpl, $counter->counter_id, $counter->title);
+        if (true === $counter->save()) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Counter code successfully received'));
+            return true;
+        } else {
+            Yii::$app->session->setFlash('error', implode(', ', $counter->errors));
+            return false;
+        }
     }
 
     /**
@@ -150,7 +176,12 @@ class GoogleAnalyticsCounter extends AbstractCounter
             }
             $client->setAccessToken($counter->access_token);
             if (true === $client->isAccessTokenExpired()) {
-                $creds = $client->fetchAccessTokenWithRefreshToken();
+                try {
+                    $creds = $client->fetchAccessTokenWithRefreshToken();
+                } catch (\Exception $e) {
+                    Yii::$app->session->setFlash('error', $e->getMessage());
+                    return false;
+                }
                 return self::handleCredentials($counter, $creds);
             }
             return true;
@@ -158,5 +189,15 @@ class GoogleAnalyticsCounter extends AbstractCounter
         return false;
     }
 
+    static function getGoals(Counter $counter)
+    {
+        /*
+        $client = self::getClient($counter->id);
+        $client->setAccessToken($counter->type->access_token);
+        $analytics = new Google_Service_Analytics($client);
+        $a = $analytics->management_accounts->listManagementAccounts();
+        $goals = $analytics->management_goals->listManagementGoals('79826766', $counter->counter_id, '~all');
+        */
 
+    }
 }

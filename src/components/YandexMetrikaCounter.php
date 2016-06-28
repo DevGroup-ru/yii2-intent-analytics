@@ -17,11 +17,7 @@ class YandexMetrikaCounter extends AbstractCounter
      */
     protected static function initCounter(Counter $model)
     {
-        $options = $model->getOptions();
-
-        if (true === empty($model->counter_html)) {
-
-        }
+        return [];
     }
 
     /**
@@ -105,6 +101,14 @@ class YandexMetrikaCounter extends AbstractCounter
                     return false;
 
                 }
+                //this is we need for correct counter object initialization
+                //we cant set this option in Yandex backend for now, but we have to use it
+                if(false === strpos($code, 'triggerEvent')) {
+                    preg_match('%Ya\.Metrika\(\{([^\}]*)\}\)%', $code, $m);
+                    if (true === isset($m[0], $m[1])) {
+                        $code = str_replace($m[0], "Ya.Metrika({{$m[1]},triggerEvent:true})", $code);
+                    }
+                }
                 $counter->counter_html = $code;
                 if (true === $counter->save()) {
                     Yii::$app->session->setFlash('success', Yii::t('app', 'Counter code successfully received'));
@@ -129,6 +133,11 @@ class YandexMetrikaCounter extends AbstractCounter
     static function isAuthorized(CounterType $counter, $client = null)
     {
         return true !== empty($counter->access_token);
+    }
+
+    static function getGoals(Counter $counter)
+    {
+        // TODO: Implement getGoals() method.
     }
 
 

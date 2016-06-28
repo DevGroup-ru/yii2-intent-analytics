@@ -23,9 +23,11 @@ $form = ActiveForm::begin(['options' => [
 <?= $form->field($model, 'active')->checkbox() ?>
 <?= $form->field($model, 'type_id')->dropDownList(CounterType::getTypes()) ?>
 <?= Html::submitButton(Yii::t('app', 'Save')) ?>
-<?php if (true === $model->type->isAuthorized()) : ?>
-    <?= Html::a(Yii::t('app', 'Get Counter Html Code'), ['/analytics/counters/get-counter-html', 'id' => $model->id]) ?>
-<?php else : ?>
-    <?= Html::a(Yii::t('app', 'Authorize'), ['/analytics/counter-types/auth', 'id' => $model->type->id]) ?>
+<?php if (false === $model->getIsNewRecord()) : ?>
+    <?php if (true === $model->type->isAuthorized()) : ?>
+        <?= Html::a(Yii::t('app', 'Get Counter Html Code'), ['/analytics/counters/get-counter-html', 'id' => $model->id]) ?>
+    <?php else : ?>
+        <?= Html::a(Yii::t('app', 'Authorize'), ['/analytics/counter-types/auth', 'id' => $model->type->id]) ?>
+    <?php endif; ?>
 <?php endif; ?>
 <?php ActiveForm::end(); ?>
