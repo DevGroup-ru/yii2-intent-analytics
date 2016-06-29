@@ -50,7 +50,7 @@ class YandexMetrikaCounter extends AbstractCounter
                 /**
                  * TODO make PR with ability getting this param ? oj just make authorization rep request.
                  * if app was already authorized there is no need to confirm users credentials, so
-                 * $expires = $client->getTokenExpires();
+                 * we can just work and renew token once a year
                  */
             } catch (AuthRequestException $ex) {
                 Yii::$app->session->setFlash('error', $ex->getMessage());
@@ -77,53 +77,52 @@ class YandexMetrikaCounter extends AbstractCounter
     {
         /** @var CounterType $type */
         $type = $counter->type;
-        if (true === $type->isAuthorized()) {
-            try {
-                $managementClient = new ManagementClient($type->access_token);
-                $paramsObj = new CounterParams();
-                /**
-                 * @var YaCounter $yaCounter
-                 * @see http://api.yandex.ru/metrika/doc/beta/management/counters/counters.xml
-                 */
-                $yaCounter = $managementClient->counters()->getCounter($counter->counter_id, $paramsObj);
-                if (false === $yaCounter instanceof YaCounter) {
-                    Yii::$app->session->setFlash('error',
-                        Yii::t('app', "'{model}' with id '{id}' not found", [
-                            'model' => Yii::t('app', 'Counter'),
-                            'id' => $counter->counter_id
-                        ])
-                    );
-                    return false;
-                }
-                $code = $yaCounter->getCode();
-                if (null === $code) {
-                    Yii::$app->session->setFlash('error', Yii::t('app', 'Error receiving Counter code'));
-                    return false;
-
-                }
-                //this is we need for correct counter object initialization
-                //we cant set this option in Yandex backend for now, but we have to use it
-                if(false === strpos($code, 'triggerEvent')) {
-                    preg_match('%Ya\.Metrika\(\{([^\}]*)\}\)%', $code, $m);
-                    if (true === isset($m[0], $m[1])) {
-                        $code = str_replace($m[0], "Ya.Metrika({{$m[1]},triggerEvent:true})", $code);
-                    }
-                }
-                $counter->counter_html = $code;
-                if (true === $counter->save()) {
-                    Yii::$app->session->setFlash('success', Yii::t('app', 'Counter code successfully received'));
-                    return true;
-                } else {
-                    Yii::$app->session->setFlash('error', implode(', ', $counter->errors));
-                    return false;
-                }
-            } catch (\Exception $ex) {
-                Yii::$app->session->setFlash('error', $ex->getMessage());
+        if (true === empty($counter->counter_id)) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Please, specify counter id!'));
+            return false;
+        }
+        try {
+            $managementClient = new ManagementClient($type->access_token);
+            $paramsObj = new CounterParams();
+            /**
+             * @var YaCounter $yaCounter
+             * @see http://api.yandex.ru/metrika/doc/beta/management/counters/counters.xml
+             */
+            $yaCounter = $managementClient->counters()->getCounter($counter->counter_id, $paramsObj);
+            if (false === $yaCounter instanceof YaCounter) {
+                Yii::$app->session->setFlash('error',
+                    Yii::t('app', "'{model}' with id '{id}' not found", [
+                        'model' => Yii::t('app', 'Counter'),
+                        'id' => $counter->counter_id
+                    ])
+                );
                 return false;
             }
-        } else {
-            //TODO
-            //send to auth
+            $code = $yaCounter->getCode();
+            if (null === $code) {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Error receiving Counter code'));
+                return false;
+
+            }
+            //this is we need for correct counter object initialization
+            //we cant set this option in Yandex backend for now, but we have to use it
+            if (false === strpos($code, 'triggerEvent')) {
+                preg_match('%Ya\.Metrika\(\{([^\}]*)\}\)%', $code, $m);
+                if (true === isset($m[0], $m[1])) {
+                    $code = str_replace($m[0], "Ya.Metrika({{$m[1]},triggerEvent:true})", $code);
+                }
+            }
+            $counter->counter_html = $code;
+            if (true === $counter->save()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Counter code successfully received'));
+                return true;
+            } else {
+                Yii::$app->session->setFlash('error', implode(', ', $counter->errors));
+                return false;
+            }
+        } catch (\Exception $ex) {
+            Yii::$app->session->setFlash('error', $ex->getMessage());
+            return false;
         }
     }
 

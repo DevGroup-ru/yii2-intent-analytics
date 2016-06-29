@@ -27,7 +27,7 @@ $form = ActiveForm::begin(['options' => [
     <?php if (true === $model->type->isAuthorized()) : ?>
         <?= Html::a(Yii::t('app', 'Get Counter Html Code'), ['/analytics/counters/get-counter-html', 'id' => $model->id]) ?>
     <?php else : ?>
-        <?= Html::a(Yii::t('app', 'Authorize'), ['/analytics/counter-types/auth', 'id' => $model->type->id]) ?>
+        <?= Html::a(Yii::t('app', 'Authorize'), ['/analytics/counter-types/edit', 'id' => $model->type->id]) ?>
     <?php endif; ?>
 <?php endif; ?>
 <?php ActiveForm::end(); ?>

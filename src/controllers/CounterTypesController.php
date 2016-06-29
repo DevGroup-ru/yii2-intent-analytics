@@ -60,8 +60,6 @@ class CounterTypesController extends Controller
                 ));
             }
         }
-        //TODO remove
-        print_r(Yii::$app->session->getAllFlashes());
         return $this->render(
             'edit',
             [

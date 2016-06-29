@@ -12,5 +12,4 @@ ua.addModule('YandexMetrika', YandexMetrika);
 ua.addModule('Piwik', Piwik);
 ua.addModule('Click', Click);
 ua.addModule('Submit', Submit);
-//global.intentAnalytics = new IntentAnalytics();
 global.IntentAnalytics = ua;

@@ -6,6 +6,7 @@ use DevGroup\Analytics\models\CounterType;
 use Google_Service_Analytics;
 use Google_Client;
 use Yii;
+use yii\helpers\Url;
 
 class GoogleAnalyticsCounter extends AbstractCounter
 {
@@ -59,9 +60,9 @@ class GoogleAnalyticsCounter extends AbstractCounter
     private static function getClient($state)
     {
         $client = new Google_Client();
-        //TODO do not forget to change
-        $client->setRedirectUri('http://localhost:9080');
-        //$client->setRedirectUri(Url::to(['/analytics/counter-types/auth'], true));
+        //dev redirect to localhost
+        //$client->setRedirectUri('http://localhost:9080');
+        $client->setRedirectUri(Url::to(['/analytics/counter-types/auth'], true));
         $client->setAccessType('offline');
         $client->setApplicationName(Yii::$app->id);
         $client->addScope(Google_Service_Analytics::ANALYTICS);
@@ -132,7 +133,6 @@ class GoogleAnalyticsCounter extends AbstractCounter
     {
         Yii::$app->session->setFlash('error', implode(': ', $creds));
         return false;
-        //TODO
     }
 
     /**
