@@ -135,17 +135,17 @@ class m160208_093809_intent_analytics extends Migration
             'id' => $this->primaryKey(),
             'route' => $this->string(250)->defaultValue(''),
             'params' => $this->text(),
-            'url' => $this->string(255)->defaultValue(''),
+            'url' => $this->string(500)->defaultValue(''),
         ], $tableOptions);
         $this->createIndex('byRoute', '{{%visited_page}}', ['route']);
-        $this->createIndex('byUrl', '{{%visited_page}}', ['url']);
+        $this->createIndex('byUrl', '{{%visited_page}}', 'url(255)');
 
         //--------------------------------------------------------------------------------------------------------------
         $this->createTable('{{%visitor}}', [
             'id' => $this->primaryKey(),
             'user_id' => $this->integer()->unsigned()->notNull()->defaultValue(0),
             'first_visit_at' => $this->dateTime(),
-            'first_visit_referrer' => $this->string(255)->defaultValue(''),
+            'first_visit_referrer' => $this->string(500)->defaultValue(''),
             'first_visit_visited_page_id' => $this->integer()->defaultExpression('NULL'),
             'first_traffic_sources_id' => $this->integer()->defaultExpression('NULL'),
             'last_activity_at' => $this->dateTime(),
@@ -164,7 +164,7 @@ class m160208_093809_intent_analytics extends Migration
         $this->createIndex('byUser', '{{%visitor}}', ['user_id']);
         $this->createIndex('byFirstVisit', '{{%visitor}}', ['first_visit_at']);
         $this->createIndex('byLastVisit', '{{%visitor}}', ['last_activity_at']);
-        $this->createIndex('byFirstUrls', '{{%visitor}}', ['first_visit_referrer']);
+        $this->createIndex('byFirstUrls', '{{%visitor}}', 'first_visit_referrer(255)');
 
         $this->addForeignKey(
             'fk_Visitor_VisitedPage_first',
