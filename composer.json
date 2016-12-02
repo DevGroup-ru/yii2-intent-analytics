@@ -18,7 +18,7 @@
     ],
     "require": {
         "yiisoft/yii2": "^2.0.6",
-        "devgroup/yii2-tag-dependency-helper": "~1.4.0"
+        "devgroup/yii2-tag-dependency-helper": "~1.5"
     },
     "require-dev": {
         "devgroup/dotplant-dev": "*"
