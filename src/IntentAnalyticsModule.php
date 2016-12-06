@@ -2,10 +2,15 @@
 
 namespace DevGroup\Analytics;
 
+use app\models\Page;
+use DevGroup\Analytics\models\VisitedPage;
 use DevGroup\Analytics\models\Visitor;
+use DevGroup\Analytics\models\VisitorVisit;
 use Yii;
 use yii\base\BootstrapInterface;
+use yii\base\Exception;
 use yii\base\Module;
+use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use yii\web\Application;
 use yii\web\Cookie;
@@ -71,6 +76,10 @@ class IntentAnalyticsModule extends Module implements BootstrapInterface
      */
     public $storeVisitedPages = true;
 
+    public $excludeUrls = [
+        '/.*debug.*/',
+    ];
+
     /**
      * Cookie name for store visitor
      *
@@ -101,6 +110,11 @@ class IntentAnalyticsModule extends Module implements BootstrapInterface
     public $cacheLifetime = 1209600;
 
     /**
+     * @var int Time in second when user online. Defaults to 10 minutes
+     */
+    public $onlineTime = 600;
+
+    /**
      * Category for Yii::t
      *
      * @var string
@@ -115,7 +129,10 @@ class IntentAnalyticsModule extends Module implements BootstrapInterface
             'class' => 'DevGroup\Analytics\models\Visitor',
         ],
         'VisitorVisit' => [
-            'class' => 'DevGroup\Analytics\models\Visitor',
+            'class' => 'DevGroup\Analytics\models\VisitorVisit',
+        ],
+        'VisitedPage' => [
+            'class' => 'DevGroup\Analytics\models\VisitedPage',
         ],
     ];
 
@@ -260,8 +277,33 @@ class IntentAnalyticsModule extends Module implements BootstrapInterface
         }
 
         if ($this->storeVisitedPages) {
-
+            $this->storeVisitedPages();
         }
+    }
+
+    private function storeVisitedPages()
+    {
+        foreach ($this->excludeUrls as $pattern) {
+            if (preg_match($pattern, Yii::$app->request->url) === 1) {
+                return;
+            }
+        }
+        /**
+         * @var VisitedPage $pageModel
+         */
+        $pageModel = Yii::$container->get($this->modelMap['VisitedPage']['class']);
+        if (!method_exists($pageModel, 'findOrCreate')) {
+            throw new Exception('In VisitedPage model must exists findOrCreate method');
+        }
+        $page = $pageModel->findOrCreate();
+        /**
+         * @var VisitorVisit $visit
+         */
+        $visit = Yii::$container->get($this->modelMap['VisitorVisit']['class']);
+        if (!method_exists($visit, 'createOrUpdate')) {
+            throw new Exception('In VisitorVisit model must exists createOrUpdate method');
+        }
+        $visit->createOrUpdate($this->visitor->getPrimaryKey(), $page->id, $this->onlineTime);
     }
 
     /**

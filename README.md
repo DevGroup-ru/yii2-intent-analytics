@@ -32,10 +32,20 @@ Add module:
 //            'visitorCookieTime' => 61516800,
 //            'visitorCookieExpireTime' => 3758400,
 //            'i18category' => 'IntentAnalyticsModule',
+//            'onlineTime' => 600,
+//            'excludeUrls' = [
+//                 '/.*debug.*/',
+//             ],
 //            'modelMap' => [
 //                'Visitor' => [
 //                    'class' => 'DevGroup\Analytics\models\Visitor',
 //                ],
+//               'VisitorVisit' => [
+//                   'class' => 'DevGroup\Analytics\models\VisitorVisit',
+//               ],
+//               'VisitedPage' => [
+//                   'class' => 'DevGroup\Analytics\models\VisitedPage',
+//               ],
 //            ],
         ],
         ...
